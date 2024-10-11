@@ -1,14 +1,19 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type DefaultSession,
   type NextAuthOptions,
+  type DefaultSession,
 } from "next-auth";
-import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
 
-import { env } from "~/env";
 import { db } from "~/server/db";
+
+import CredentialsProvider from "next-auth/providers/credentials";
+
+import type { Role, User as PrismaUser } from "@prisma/client";
+import { createHash } from "crypto";
+import { compareHashPassword, hashPassword } from "~/utils/util";
+import { Permission, User } from "~/types";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,11 +23,7 @@ import { db } from "~/server/db";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: PrismaUser & { role?: Role };
   }
 
   // interface User {
@@ -37,31 +38,98 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
+  adapter: PrismaAdapter(db),
+  providers: [
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. "Sign in with...")
+      name: "Credentials",
+      // `credentials` is used to generate a form on the sign in page.
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" },
+      },
+      //@ts-ignore
+      async authorize(
+        credentials: Record<"username" | "password" | "session", string>,
+        req,
+      ) {
+        // Add logic here to look up the user from the credentials supplied
+
+        const user = await db.user.findFirst({
+          where: {
+            username: credentials.username,
+          },
+          include: {
+            role: true,
+          },
+        });
+
+        if (credentials.session) {
+          const session = JSON.parse(credentials.session);
+          const loggedInUser = await db.user.findFirst({
+            where: {
+              username: session.username,
+            },
+            include: {
+              role: true,
+            },
+          });
+
+          if (loggedInUser.role?.permissions) {
+            const permissions: Permission[] = JSON.parse(
+              loggedInUser.role.permissions,
+            );
+            if (
+              permissions.find((a) => a.id === "ManageUsers")?.isActive === true
+            ) {
+              return user;
+            } else return;
+          }
+        } else if (user) {
+          if (
+            compareHashPassword(credentials.password, user.password).success
+          ) {
+            return user;
+          }
+          return undefined;
+        } else {
+          // uncomment to create a user for the first time
+          // await db.user.create({
+          //   data: {
+          //     username: credentials.username,
+          //     password: hashPassword(credentials.password),
+          //   },
+          // });
+          return undefined;
+        }
       },
     }),
-  },
-  adapter: PrismaAdapter(db) as Adapter,
-  providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    session: async ({ session, token }: { session: any; token: any }) => {
+      const user = await db.user.findUnique({
+        where: { username: token.user.username },
+        include: { role: true },
+      });
+      session.user = user;
+      return session;
+    },
+    jwt: async ({ token, user }: any) => {
+      user && (token.user = user);
+
+      delete token.user.password;
+      return token;
+    },
+  },
+  pages: {
+    signIn: "/login", // this will allow us to use our own login page
+  },
 };
 
 /**
@@ -69,4 +137,11 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
+
 export const getServerAuthSession = () => getServerSession(authOptions);
+// export const getServerAuthSession = (ctx: {
+//   req: GetServerSidePropsContext["req"];
+//   res: GetServerSidePropsContext["res"];
+// }) => {
+//   return getServerSession(ctx.req, ctx.res, authOptions);
+// };
