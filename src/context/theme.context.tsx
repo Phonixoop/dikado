@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@prisma/client";
 import {
   ReactNode,
   createContext,
@@ -12,7 +11,6 @@ import {
 } from "react";
 // import { Default_Theme } from "~/constants/theme";
 const Default_Theme = "theme-dark-1";
-import { api } from "~/utils/api";
 
 type TThemeContext = {
   theme: string;

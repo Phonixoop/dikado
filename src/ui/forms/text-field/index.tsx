@@ -66,16 +66,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({ children = <>
         type="text"
         className={twMerge(
           direction,
-          `selection:text-secondry peer
-            block 
-            w-full
-            appearance-none rounded-t-lg border-b-2 border-primary 
-            bg-transparent 
-            px-2.5 
-            pb-2.5 pt-5 
-            text-sm font-bold text-primary 
-            placeholder:opacity-0 focus:border-accent focus:outline-none  
-            focus:ring-0 focus:placeholder:opacity-100`,
+          `selection:text-secondry peer block w-full appearance-none rounded-t-lg border-b-2 border-primary bg-transparent px-2.5 pb-2.5 pt-5 text-sm font-bold text-primary placeholder:opacity-0 focus:border-accent focus:outline-none focus:ring-0 focus:placeholder:opacity-100`,
           className,
         )}
         placeholder={" "}
@@ -102,21 +93,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({ children = <>
         onClick={() => {
           if (inputRef.current) inputRef.current.focus();
         }}
-        className="placeholder absolute
-          right-2.5
-          top-9
-          origin-top-right
-          -translate-y-4
-          scale-75
-          transform 
-          text-sm
-          text-secondary 
-          opacity-0
-          duration-300
-          peer-placeholder-shown:scale-100
-          peer-focus:text-primary
-          mobileMax:peer-focus:opacity-100 
-        "
+        className="placeholder absolute right-2.5 top-9 origin-top-right -translate-y-4 scale-75 transform text-sm text-secondary opacity-0 duration-300 peer-placeholder-shown:scale-100 peer-focus:text-primary mobileMax:peer-focus:opacity-100"
       >
         {placeholder}
       </label>
@@ -125,3 +102,5 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({ children = <>
 });
 
 export default TextField;
+
+TextField.displayName = "TextField";

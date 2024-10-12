@@ -94,3 +94,7 @@ export function CategoriesList() {
     />
   );
 }
+
+function IconsGallery() {
+  return <></>;
+}

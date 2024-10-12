@@ -1,10 +1,8 @@
 import { createHash } from "crypto";
-import moment from "jalali-moment";
+
 // import { CITIES } from "~/constants";
 // import { Performance_Levels } from "~/constants/personnel-performance";
 import { Permission } from "~/types";
-import { calculateDepoCompleteTime } from "~/utils/date-utils";
-import { calculatePerformance } from "~/utils/personnel-performance";
 
 export function hashPassword(password: string) {
   return createHash("sha256").update(password).digest("hex");
@@ -51,123 +49,6 @@ export function en(inputString: string): string {
 
   return inputString.replace(/[۰-۹]/g, (match) => persianToEnglishMap[match]);
 }
-
-// export function processDataForChart(rawData, groupBy, values = []) {
-//   return rawData.reduce((acc, current) => {
-//     const groupByKey = current[groupBy];
-
-//     const existingGroup = acc.find((item) => item.key === groupByKey);
-
-//     if (existingGroup) {
-//       for (const value of values) {
-//         existingGroup[value] =
-//           (existingGroup[value] || 0) + (current[value] || 0);
-//       }
-//     } else {
-//       const group = { key: groupByKey };
-//       for (const value of values) {
-//         group[value] = current[value] || 0;
-//       }
-//       acc.push(group);
-//     }
-
-//     return acc;
-//   }, []);
-// }
-
-// export function processDataForChart(rawData, groupBy, values = [], where = {}) {
-//   return rawData.reduce((acc, current) => {
-//     const groupByKeys = Array.isArray(groupBy) ? groupBy : [groupBy];
-
-//     // Check if the current item meets the 'where' conditions
-//     const meetsConditions = Object.entries(where).every(
-//       ([conditionKey, conditionValues]) => {
-//         if (Array.isArray(conditionValues)) {
-//           return conditionValues.includes(current[conditionKey]);
-//         }
-//         return current[conditionKey] === conditionValues;
-//       },
-//     );
-
-//     if (!meetsConditions) {
-//       return acc; // Skip current item if it doesn't meet conditions
-//     }
-
-//     const groupByKey = groupByKeys.map((key) => current[key]);
-
-//     const existingGroupIndex = acc.findIndex((item) =>
-//       groupByKeys.every((key, index) => item.key[key] === groupByKey[index]),
-//     );
-
-//     if (existingGroupIndex !== -1) {
-//       for (const value of values) {
-//         acc[existingGroupIndex][value] =
-//           (acc[existingGroupIndex][value] || 0) + (current[value] || 0);
-//       }
-//     } else {
-//       const group = { key: {} };
-//       groupByKeys.forEach((key, index) => {
-//         group.key[key] = groupByKey[index];
-//       });
-//       for (const value of values) {
-//         group[value] = current[value] || 0;
-//       }
-//       acc.push(group);
-//     }
-
-//     return acc;
-//   }, []);
-// }
-
-// export function processDataForChart(rawData, groupBy, values = [], where = {}) {
-//   return rawData.reduce((acc, current) => {
-//     const groupByKeys = Array.isArray(groupBy) ? groupBy : [groupBy];
-
-//     // Check if the current item meets the 'where' conditions
-//     const meetsConditions = Object.entries(where).every(
-//       ([conditionKey, conditionValues]) => {
-//         if (Array.isArray(conditionValues)) {
-//           return conditionValues.includes(current[conditionKey]);
-//         }
-//         return current[conditionKey] === conditionValues;
-//       },
-//     );
-
-//     if (!meetsConditions) {
-//       return acc; // Skip current item if it doesn't meet conditions
-//     }
-
-//     const groupByKey = groupByKeys.map((key) => current[key]);
-
-//     const existingGroupIndex = acc.findIndex((item) =>
-//       groupByKeys.every((key, index) => item.key[key] === groupByKey[index]),
-//     );
-
-//     if (existingGroupIndex !== -1) {
-//       for (const value of values) {
-//         // my code
-//         if (typeof acc[existingGroupIndex][value] === "string") {
-//           if (acc[existingGroupIndex][value] === current[value]) continue;
-
-//           acc[existingGroupIndex][value] += ","; // my code
-//         }
-
-//         acc[existingGroupIndex][value] += current[value] || 0;
-//       }
-//     } else {
-//       const group = { key: {} };
-//       groupByKeys.forEach((key, index) => {
-//         group.key[key] = groupByKey[index];
-//       });
-//       for (const value of values) {
-//         group[value] = current[value] || 0;
-//       }
-//       acc.push(group);
-//     }
-
-//     return acc;
-//   }, []);
-// }
 
 export function processDataForChart(
   rawData: any,
@@ -265,45 +146,6 @@ export function countColumnValues(data, column, values) {
   return result;
 }
 
-export function processDepoCompleteTimeData(
-  data,
-): { ServiceName: string; DepoCompleteTime: number }[] {
-  const groupedData = data.reduce((acc, current) => {
-    const serviceName = current.ServiceName;
-    const depoCompleteTime = calculateDepoCompleteTime(current);
-
-    if (!isNaN(depoCompleteTime)) {
-      // Check if the service name already exists, if not create a new entry
-      const existingService = acc.find(
-        (item) => item.ServiceName === serviceName,
-      );
-
-      if (existingService) {
-        // Update the total DepoCompleteTime for the existing service name
-        existingService.TotalDepoCompleteTime += depoCompleteTime;
-        existingService.Count++;
-      } else {
-        // Create a new entry for the service name
-        acc.push({
-          ServiceName: serviceName,
-          TotalDepoCompleteTime: depoCompleteTime,
-          Count: 1,
-        });
-      }
-    }
-
-    return acc;
-  }, []);
-
-  return groupedData.map((a) => {
-    const depoT = Math.round(a.TotalDepoCompleteTime);
-    return {
-      ServiceName: a.ServiceName,
-      DepoCompleteTime: depoT >= 0 ? depoT : 0,
-    };
-  });
-}
-
 export function sumColumnBasedOnRowValue(
   table,
   valueColumn,
@@ -324,18 +166,6 @@ export function sumColumnBasedOnRowValue(
 
   return totalSum;
 }
-export function getServiceNameColor(key) {
-  return ServiceName_Color[key];
-}
-
-const ServiceName_Color = {
-  "ثبت ارزیابی بدون اسکن مدارک (غیر مستقیم)": "rose",
-  بیمارستانی: "amber",
-  "ثبت ارزیابی با اسکن مدارک": "indigo",
-  دارو: "violet",
-  پاراکلینیک: "slate",
-  "ثبت ارزیابی بدون اسکن مدارک": "cyan",
-};
 
 export function commify(num) {
   var str = num.toString().split(".");

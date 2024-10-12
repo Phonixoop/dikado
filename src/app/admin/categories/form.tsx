@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect } from "react";
 
 //UI
-import TextField from "~/ui/forms/text-field";
+
 import InputError from "~/ui/forms/input-error";
 import withLabel from "~/ui/forms/with-label";
 import { api } from "~/trpc/react";
@@ -14,6 +14,8 @@ import { createCategorySchema } from "~/server/validations/category.validation";
 import Button from "~/ui/buttons";
 import { Category } from "@prisma/client";
 import { useCategory } from "~/context/category.context";
+import FileUpload from "~/features/file-upload";
+import TextField from "~/ui/forms/text-field";
 
 const TextFieldWithLable = withLabel(TextField);
 
@@ -127,6 +129,9 @@ export default function CategoryForm({
                 formik.setFieldValue("file", event.currentTarget.files[0]);
               }}
             />
+          </div>
+          <div className="w-full">
+            <FileUpload />
           </div>
           <Button
             type="submit"

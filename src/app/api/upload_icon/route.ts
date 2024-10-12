@@ -12,13 +12,21 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
 
-    const fileName = `${generateUUID()}-${file.name}`;
-    const fileUrl = `./icons/${fileName}`;
-    await fs.writeFile(fileUrl, buffer);
+    const files = formData.getAll("files") as File[];
+    let file_urls = [];
+    for (const file of files) {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = new Uint8Array(arrayBuffer);
+
+      const fileName = `${generateUUID()}-${file.name}`;
+      const fileUrl = `./icons/${fileName}`;
+      file_urls.push(fileUrl);
+      await fs.writeFile(fileUrl, buffer);
+    }
 
     revalidatePath("/");
 
-    return NextResponse.json({ status: "success", fileUrl });
+    return NextResponse.json({ status: "success", file_urls });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ status: "fail", error: e });

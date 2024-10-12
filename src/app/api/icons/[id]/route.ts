@@ -9,11 +9,11 @@ import { ServerResponse } from "http";
 
 export async function GET(req: any, res: any, context: any) {
   const filePath = join(process.cwd(), "icons", res.params.id);
-  console.log({ res });
+
   // Path to image directory outside the public folder
 
   try {
-    const imageBuffer = await fs.readFileSync(filePath);
+    const imageBuffer = fs.readFileSync(filePath);
 
     return new NextResponse(imageBuffer, {
       status: 200,

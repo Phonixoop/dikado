@@ -65,3 +65,18 @@ model Category {
 
     @@map("categories")
 }
+
+model File {
+    id               String    @id @default(cuid())
+    tag              String?
+    url              String?
+    size             Int?
+    mimetype         String?
+    uploadPath       String?
+    originalFilename String?
+    newFilename      String?
+    created_at       DateTime  @default(now())
+    updated_at       DateTime?
+
+    @@map("files")
+}

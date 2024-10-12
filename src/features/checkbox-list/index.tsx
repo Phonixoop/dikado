@@ -1,3 +1,4 @@
+"use client";
 import { Column } from "@tanstack/react-table";
 import { MultiSelect, MultiSelectItem } from "@tremor/react";
 import { ListXIcon, ListChecksIcon } from "lucide-react";
@@ -47,7 +48,7 @@ export function SelectControlledOld({
   return (
     <div
       className={twMerge(
-        " flex w-full items-center justify-center gap-1 px-2 text-center sm:px-0 ",
+        "flex w-full items-center justify-center gap-1 px-2 text-center sm:px-0",
         className,
       )}
     >
@@ -77,8 +78,8 @@ export function SelectControlledOld({
                 className={twMerge(
                   "font-bold",
                   selectAllState
-                    ? " border border-primary/20  p-1.5 text-emerald-600 transition-all duration-300 hover:bg-emerald-50/20"
-                    : "border border-primary/20  bg-primary/10 p-1.5 text-rose-600 transition-all duration-300 hover:bg-primary/20",
+                    ? "border border-primary/20 p-1.5 text-emerald-600 transition-all duration-300 hover:bg-emerald-50/20"
+                    : "border border-primary/20 bg-primary/10 p-1.5 text-rose-600 transition-all duration-300 hover:bg-primary/20",
                 )}
                 onClick={() => {
                   if (value.length == list.length) {
@@ -127,7 +128,7 @@ export function SelectColumnFilter({
   const selectedCount = getFilterValue() ? (getFilterValue() as any).length : 0;
   const selectAllState = selectedCount < unique.length;
   return (
-    <div className=" flex w-full items-center justify-center gap-2 px-2 text-center sm:px-0 ">
+    <div className="flex w-full items-center justify-center gap-2 px-2 text-center sm:px-0">
       <SelectControlledOld
         className="min-w-0"
         title={column.columnDef.header}
@@ -153,8 +154,8 @@ export function SelectColumnFilter({
                 className={twMerge(
                   "font-bold",
                   selectAllState
-                    ? "border border-primary/20  p-1.5 text-emerald-600 transition-all duration-300 hover:bg-emerald-50/20"
-                    : "border border-primary/20  bg-primary/10 p-1.5 text-rose-600 transition-all duration-300 hover:bg-primary/20",
+                    ? "border border-primary/20 p-1.5 text-emerald-600 transition-all duration-300 hover:bg-emerald-50/20"
+                    : "border border-primary/20 bg-primary/10 p-1.5 text-rose-600 transition-all duration-300 hover:bg-primary/20",
                 )}
                 onClick={() => {
                   if (selectedCount == unique.length) {

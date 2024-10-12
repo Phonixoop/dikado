@@ -1,4 +1,3 @@
-import { PERMISSIONS } from "~/constants";
 import { Permission } from "~/types";
 
 // Define the type for user permissions with specific keys
