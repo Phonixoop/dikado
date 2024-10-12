@@ -56,42 +56,12 @@ model Verification_token {
     @@map("verification_tokens")
 }
 
-model Form {
-    id                  Int                           @id @default(autoincrement())
-    title               String
-    form_number         String
-    description         String
-    accountingDocuments FormAccountingDocumentTable[] @relation("FormToDocuments")
-    appendices          String
-    rules               String
-    considerations      String
-    time                String
-    audit               String
-    financialProcessing String                        @map("financial_Processing")
-    file_path           String?
-    created_at          DateTime                      @default(now())
-    updated_at          DateTime?
-
-    @@map("forms")
-}
-
-model FormAccountingDocumentTable {
-    id          Int    @id @default(autoincrement())
-    formId      Int
-    group       String
-    total       String
-    moeen       String
-    level_4     String
-    level_5     String
-    level_6     String
-    description String
-    debtor      String
-    creditor    String
-
-    form Form @relation("FormToDocuments", fields: [formId], references: [id])
-
+model Category {
+    id         String    @id @default(cuid())
+    name       String
+    icon_url   String
     created_at DateTime  @default(now())
     updated_at DateTime?
 
-    @@map("FormAccountingDocumentTables")
+    @@map("categories")
 }

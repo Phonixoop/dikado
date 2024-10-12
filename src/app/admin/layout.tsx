@@ -29,9 +29,9 @@ const menuList = [
   },
 
   {
-    value: "فرم ها",
-    description: `در این بخش می توانید بر روی فرم ویرایش های لازم را انجام دهید`,
-    link: "forms",
+    value: "دسته بندی ها",
+    description: `در این بخش می توانید بر روی دسته بندی ویرایش های لازم را انجام دهید`,
+    link: "categories",
   },
 ];
 export default async function AdminLayout({
@@ -46,18 +46,18 @@ export default async function AdminLayout({
       dir="rtl"
       className="m-auto flex min-h-screen w-full max-w-[1920px] flex-col items-center bg-secondary"
     >
-      <Container className="flex w-full items-center justify-center ">
+      <Container className="flex w-full items-center justify-center">
         <BlurBackground />
 
-        <Container className="flex  flex-col bg-secondary">
+        <Container className="flex flex-col bg-secondary">
           <div
-            className="flex flex-col items-center justify-between gap-5  py-8 md:flex-row"
+            className="flex flex-col items-center justify-between gap-5 py-8 md:flex-row"
             dir="rtl"
           >
-            <div className="flex flex-col  items-center justify-center gap-2 md:flex-row">
+            <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
               <div className="flex items-center justify-center text-accent">
                 <Link href={"/admin"}>
-                  <span className="px-2 "> {session?.user?.username}</span>
+                  <span className="px-2"> {session?.user?.username}</span>
                   <DecideMobileOrDesktop />
                   <span> {session?.user?.name}</span>
                 </Link>
@@ -78,15 +78,15 @@ export default async function AdminLayout({
           </div>
         </Container>
       </Container>
-      <ContainerBottomBorder className=" sticky top-0 z-50 flex pt-2 backdrop-blur-lg">
-        <Container className=" max2xl:w-full">
+      <ContainerBottomBorder className="sticky top-0 z-50 flex pt-2 backdrop-blur-lg">
+        <Container className="max2xl:w-full">
           <Menu rootPath={"/admin"} list={menuList} />
         </Container>
       </ContainerBottomBorder>
       {/* {currentMenuItem && (
         <LayoutSubContainer currentMenuItem={currentMenuItem} />
       )} */}
-      <ContainerBottomBorder className="h-full items-start bg-accent/5 ">
+      <ContainerBottomBorder className="h-full items-start bg-accent/5">
         {children}
       </ContainerBottomBorder>
     </div>

@@ -1,4 +1,4 @@
-import { formRouter } from "~/server/api/routers/form";
+import { categoryRouter } from "~/server/api/routers/category";
 import { roleRouter } from "~/server/api/routers/role";
 import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
@@ -11,7 +11,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   role: roleRouter,
   user: userRouter,
-  form: formRouter,
+  category: categoryRouter,
 });
 
 // export type definition of API
