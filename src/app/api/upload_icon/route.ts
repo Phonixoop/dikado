@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { generateUUID } from "~/lib/utils";
 
 export async function POST(req: Request) {
   try {
@@ -13,13 +12,13 @@ export async function POST(req: Request) {
     const buffer = new Uint8Array(arrayBuffer);
 
     const files = formData.getAll("files") as File[];
-    let file_urls = [];
+    let file_urls: string[] = [];
     for (const file of files) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = new Uint8Array(arrayBuffer);
 
       const fileName = `${generateUUID()}-${file.name}`;
-      const fileUrl = `./icons/${fileName}`;
+      const fileUrl: string = `./icons/${fileName}`;
       file_urls.push(fileUrl);
       await fs.writeFile(fileUrl, buffer);
     }

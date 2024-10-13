@@ -14,10 +14,10 @@ const TextFieldWithLable = withLabel(TextField);
 
 // Zod schema definition
 const FileUploadSchema = z.object({
+  tag: z.string().min(3, "حداقل 3 حرف").optional(),
   files: z
     .array(
       z.object({
-        tag: z.string().min(3, "حداقل 3 حرف").optional(),
         file: z.instanceof(File),
         previewUrl: z.string(),
       }),
@@ -26,11 +26,10 @@ const FileUploadSchema = z.object({
 });
 
 // FileData type to handle files and their preview
-interface FileData {
-  tag?: string;
+type FileData = {
   file: File;
   previewUrl: string;
-}
+};
 
 const FileUpload: React.FC = () => {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -47,10 +46,12 @@ const FileUpload: React.FC = () => {
       const formData = new FormData();
 
       values.files.forEach((fileData, index) => {
-        formData.append(`files`, fileData.file);
-        formData.append(`tag_${index}`, fileData.tag); // Append each file's tag with a unique key
+        formData.append(`file`, fileData.file);
+        // Append each file's tag with a unique key
+        // formData.append(`tag_${index}`, fileData.tag);
       });
-
+      formData.append(`tag`, values.tag);
+      console.log(formData);
       try {
         const response = await axios.post("/api/upload", formData, {
           headers: {
@@ -110,6 +111,9 @@ const FileUpload: React.FC = () => {
       }}
       className="mx-auto flex w-full flex-col rounded-lg border border-accent/30 bg-accent/10 p-4"
     >
+      <h3 className="text-center text-xl font-semibold text-accent">
+        آپلود فایل
+      </h3>
       <div className="w-full py-5">
         <TextFieldWithLable
           label={"تگ"}
@@ -124,17 +128,16 @@ const FileUpload: React.FC = () => {
         onDragEnter={() => setIsDragOver(true)}
         onDragLeave={() => setIsDragOver(false)}
         className={cn(
-          "mb-4 flex h-40 items-center justify-center rounded-lg border border-dashed border-gray-300 text-gray-500",
-          isDragOver
-            ? "border-none bg-primary/20 text-primary"
-            : "bg-secondary",
+          "mb-4 flex h-40 items-center justify-center rounded-lg border border-dashed border-primary",
+          isDragOver ? "border-none bg-accent/20 text-primary" : "bg-secondary",
         )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
         <p
-          onDragEnter={() => setIsDragOver(true)}
-          onDragLeave={() => setIsDragOver(false)}
+          onDragEnter={(e) => e.stopPropagation()}
+          onDragLeave={(e) => e.stopPropagation()}
+          className="text-primary/80"
         >
           فایل های خود را اینجا رها کنید
         </p>
@@ -161,12 +164,11 @@ const FileUpload: React.FC = () => {
 
       {files.length > 0 && (
         <div className="mb-4">
-          <h3 className="mb-2 text-lg font-semibold">فایل ها</h3>
           <ul>
             {files.map((fileData, index) => (
               <li
                 key={index}
-                className="mb-2 flex items-center justify-between rounded-md bg-secbuttn px-4 py-2"
+                className="mb-2 flex items-center justify-between rounded-md bg-secondary px-4 py-2"
               >
                 <span>{fileData.file.name}</span>
                 <Image

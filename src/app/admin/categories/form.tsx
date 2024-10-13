@@ -24,13 +24,14 @@ type CategoryType = {
   name: string;
   icon_url: string;
 };
-export default function CategoryForm({
+/*{
   onCreateSuccess = (category: Category) => {},
   onClearCategory = () => {},
 }: {
   onCreateSuccess?: (category: Category) => any;
   onClearCategory?: () => any;
-}) {
+})*/
+export default function CategoryForm() {
   const { selectedRowCategory, setSelectedRowCategory } = useCategory();
   const utils = api.useUtils();
   const createCategory = api.category.create.useMutation({
@@ -92,7 +93,7 @@ export default function CategoryForm({
     });
   }, [selectedRowCategory]);
   return (
-    <>
+    <div className="flex w-full flex-col gap-4">
       <form
         onSubmit={formik.handleSubmit}
         dir="rtl"
@@ -130,9 +131,7 @@ export default function CategoryForm({
               }}
             />
           </div>
-          <div className="w-full">
-            <FileUpload />
-          </div>
+
           <Button
             type="submit"
             isLoading={createCategory.isPending}
@@ -142,6 +141,9 @@ export default function CategoryForm({
           </Button>
         </div>
       </form>
-    </>
+      <div className="w-full">
+        <FileUpload />
+      </div>
+    </div>
   );
 }

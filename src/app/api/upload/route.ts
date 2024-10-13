@@ -3,11 +3,57 @@ import formidable from "formidable";
 import fs from "fs";
 import path from "path";
 import { db } from "~/server/db";
+import { generateUUID } from "~/lib/utils";
 
 // Disable Next.js' default body parser
 
+// API handler
+export async function POST(req, res) {
+  const formData = await req.formData();
+
+  const tag = formData.get("tag");
+  const files = formData.getAll("file") as File[];
+
+  try {
+    const uploadedFilePaths: string[] = []; // Track uploaded file paths for rollback
+
+    // Loop through each file and its corresponding tag
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Ensure that a tag is provided
+
+      const newFilename = file.name + "-" + generateUUID();
+      const filePath = await save(file, newFilename);
+      console.log(filePath);
+      uploadedFilePaths.push(filePath); // Store file paths to delete if needed
+
+      try {
+        await db.file.create({
+          data: {
+            tag: tag, // Use the provided tag for each file
+            url: `/uploads/${newFilename}`,
+            size: file.size,
+            mimetype: file.type,
+            uploadPath: filePath,
+            originalFilename: file.name,
+            newFilename: newFilename,
+          },
+        });
+      } catch (dbError) {
+        // Rollback: delete the uploaded file if the DB operation fails
+        deleteFile(filePath);
+        return Response.json({ error: "Error uploading files", dbError });
+      }
+    }
+    return Response.json({ message: "Files uploaded successfully" });
+  } catch (uploadError) {
+    return Response.json({ error: "Error uploading files", uploadError });
+  }
+}
+
 // Helper to handle file saving
-const saveFile = async (file: formidable.File): Promise<string> => {
+const saveFile = async (file): Promise<string> => {
   const data = fs.readFileSync(file.filepath);
   const uploadPath = path.join(
     process.cwd(),
@@ -18,69 +64,47 @@ const saveFile = async (file: formidable.File): Promise<string> => {
   return uploadPath;
 };
 
+async function save(file: File, filename: string) {
+  const uploadPath = path.join(process.cwd(), "/uploads", filename);
+  console.log(file.type);
+  try {
+    const bb = await file.arrayBuffer();
+    const buffer = Buffer.from(bb);
+    fs.writeFileSync(uploadPath, buffer);
+  } catch (error) {
+    console.log("e", error);
+  }
+
+  return uploadPath;
+}
 // Helper to delete a file
 const deleteFile = (filePath: string) => {
   fs.unlinkSync(filePath);
 };
 
-// API handler
-export async function POST(req, res) {
-  const form = new formidable.IncomingForm({ multiples: true });
+function convertFormDataArrayToObject(formDataArray) {
+  const formDataObject = {};
 
-  form.parse(req, async (err, fields, files) => {
-    if (err) return res.status(500).json({ error: "Error parsing the files" });
+  formDataArray.forEach((entry) => {
+    // Ensure the entry is an array with exactly two elements: [key, value]
+    if (Array.isArray(entry) && entry.length === 2) {
+      const [key, value] = entry;
 
-    const fileList = Array.isArray(files.files) ? files.files : [files.files];
-
-    // Check if each file has a tag provided in the fields
-    if (fileList.length !== Object.keys(fields).length - 1) {
-      return res
-        .status(400)
-        .json({ error: "Each file must have a corresponding tag" });
-    }
-
-    try {
-      const uploadedFilePaths: string[] = []; // Track uploaded file paths for rollback
-      const tags = fields.tag || []; // As
-      // Loop through each file and its corresponding tag
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        const tag = tags[i]; // Assuming tag fields are named as tag_0, tag_1, ...
-
-        // Ensure that a tag is provided
-        if (!tag) {
-          return res.status(400).json({
-            error: `Tag is required for file ${file.originalFilename}`,
-          });
+      // If the key already exists, append the value to an array
+      if (formDataObject[key]) {
+        if (Array.isArray(formDataObject[key])) {
+          formDataObject[key].push(value);
+        } else {
+          formDataObject[key] = [formDataObject[key], value];
         }
-
-        const filePath = await saveFile(file);
-        uploadedFilePaths.push(filePath); // Store file paths to delete if needed
-
-        try {
-          await db.file.create({
-            data: {
-              tag: tag, // Use the provided tag for each file
-              url: `/uploads/${file.newFilename || file.originalFilename}`,
-              size: file.size,
-              mimetype: file.mimetype,
-              uploadPath: filePath,
-              originalFilename: file.originalFilename,
-              newFilename: file.newFilename || file.originalFilename,
-            },
-          });
-        } catch (dbError) {
-          // Rollback: delete the uploaded file if the DB operation fails
-          deleteFile(filePath);
-          return res
-            .status(500)
-            .json({ error: "Failed to save file metadata to the database" });
-        }
+      } else {
+        // If the key doesn't exist, assign the value directly
+        formDataObject[key] = value;
       }
-
-      res.status(200).json({ message: "Files uploaded successfully" });
-    } catch (uploadError) {
-      res.status(500).json({ error: "Error uploading files" });
+    } else {
+      console.error(`Invalid entry: ${entry}`);
     }
   });
+
+  return formDataObject;
 }
