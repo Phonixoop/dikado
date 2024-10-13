@@ -169,7 +169,7 @@ export default function Modal({
                 onClick={handleClose}
                 className={twMerge(
                   center ? "laptopMin:items-center" : "items-end",
-                  ` fixed  flex items-end justify-center overflow-hidden bg-secondary/30 backdrop-blur-md ${zIndex} inset-0  `,
+                  `fixed flex items-end justify-center overflow-hidden bg-secondary/30 backdrop-blur-md ${zIndex} inset-0`,
                 )}
                 style={{
                   zIndex: 1000,
@@ -195,7 +195,7 @@ export default function Modal({
                   className={twMerge(
                     modalSize,
                     center ? "mobileMin:rounded-2xl" : "rounded-t-2xl",
-                    "relative z-[101] flex  flex-col  items-center  justify-center gap-0 overflow-hidden border  border-accent/50  ",
+                    "relative z-[101] flex flex-col items-center justify-center gap-0 overflow-hidden border border-accent/50",
                     isOnMobile ? "h-full" : "",
                     className,
                   )}
@@ -204,18 +204,18 @@ export default function Modal({
                 >
                   <div
                     dir="rtl"
-                    className={`sticky top-[0px] z-20 flex h-auto w-full  flex-col items-center justify-center  overflow-hidden  `}
+                    className={`sticky top-[0px] z-20 flex h-auto w-full flex-col items-center justify-center overflow-hidden`}
                   >
                     {/* <div className="mobileMax:flex hidden w-1/2 h-[10px] bg-gray-300 mt-1 mb-auto rounded-2xl" /> */}
                     <div
-                      className={`flex w-full flex-row-reverse items-center  justify-between p-3 ${
+                      className={`flex w-full flex-row-reverse items-center justify-between p-3 ${
                         !isOnMobile ? "pl-[26px]" : "pr-[26px]"
                       }`}
                     >
                       {isOnMobile && (
                         <div className="flex h-[24px] w-[24px] items-center justify-center">
                           <button
-                            className=" duration-400 relative flex w-full select-none items-center justify-center rounded-lg transition-all"
+                            className="duration-400 relative flex w-full select-none items-center justify-center rounded-lg transition-all"
                             onClick={handleClose}
                           >
                             <ChevronLeftIcon className="h-5 w-5 fill-none stroke-primary stroke-2" />
@@ -226,12 +226,12 @@ export default function Modal({
                         {title}
                       </p>
                       {!isOnMobile && (
-                        <div className="group flex h-8 w-8 items-center justify-center rounded-full hover:bg-primbuttn/20 ">
+                        <div className="group flex h-8 w-8 items-center justify-center rounded-full hover:bg-primbuttn/20">
                           <Button
                             className="duration-400 relative flex w-full select-none items-center justify-center rounded-lg transition-all"
                             onClick={handleClose}
                           >
-                            <XIcon className="h-7 w-7 scale-110 stroke-primbuttn group-hover:stroke-accent " />
+                            <XIcon className="h-7 w-7 scale-110 stroke-primbuttn group-hover:stroke-accent" />
                           </Button>
                         </div>
                       )}

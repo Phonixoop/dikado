@@ -33,6 +33,11 @@ const menuList = [
     description: `در این بخش می توانید بر روی دسته بندی ویرایش های لازم را انجام دهید`,
     link: "categories",
   },
+  {
+    value: "رسانه ها",
+    description: `در این بخش می توانید بر روی رسانه ها  ویرایش های لازم را انجام دهید`,
+    link: "files",
+  },
 ];
 export default async function AdminLayout({
   children,

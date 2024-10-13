@@ -1,3 +1,5 @@
+import path from "path";
+
 export const MENU = [
   {
     value: "خانه",
@@ -40,3 +42,5 @@ export const MENU = [
     link: "/dashboard/personnels",
   },
 ];
+
+export const ADMIN_UPLOADS = path.join(process.cwd(), "/uploads");

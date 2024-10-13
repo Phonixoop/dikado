@@ -10,6 +10,7 @@ import Button from "~/ui/buttons";
 import { cn } from "~/lib/utils";
 import axios from "axios";
 import Image from "next/image";
+import { toast } from "sonner";
 const TextFieldWithLable = withLabel(TextField);
 
 // Zod schema definition
@@ -51,15 +52,16 @@ const FileUpload: React.FC = () => {
         // formData.append(`tag_${index}`, fileData.tag);
       });
       formData.append(`tag`, values.tag);
-      console.log(formData);
+
       try {
-        const response = await axios.post("/api/upload", formData, {
+        const response = await axios.post("/api/uploads", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
+        toast(`${files.length} فایل با موفقیت آپلود شد`);
 
-        console.log(response.data); // Handle successful upload
+        setFiles([]);
       } catch (error) {
         console.error("File upload failed", error); // Handle failure
       }

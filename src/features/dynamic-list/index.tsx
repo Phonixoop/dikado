@@ -7,7 +7,7 @@ import withConfirmation from "~/ui/with-confirmation";
 
 interface ListProps<T> {
   data: T[];
-  selectedRowId: string;
+  selectedRowId?: string;
   columns: ColumnDef<T>[];
   onCreate?: () => void;
   onRead?: (item: T) => void;
@@ -44,7 +44,9 @@ export default function DynamicList<T>({
         columns={flatData.length > 0 ? columns : []}
         data={flatData}
         clickedRowIndex={selectedRowId}
-        onClick={(row) => onRead(row.original)}
+        onClick={(row) => {
+          if (onRead) onRead(row.original);
+        }}
       />
 
       <div className="flex items-center justify-center gap-5 py-5">
@@ -54,7 +56,7 @@ export default function DynamicList<T>({
           onClick={fetchNextPage}
           className="w-fit cursor-pointer rounded-full bg-secbuttn px-4 py-2 text-primbuttn"
         >
-          {hasNextPage ? "Load More" : "All Loaded"}
+          {hasNextPage ? "بیشتر" : isLoading ? "..." : "تمام"}
         </Button>
       </div>
     </>

@@ -4,6 +4,8 @@ import fs from "fs";
 import path from "path";
 import { db } from "~/server/db";
 import { generateUUID } from "~/lib/utils";
+import { NextResponse } from "next/server";
+import { ADMIN_UPLOADS } from "~/constants";
 
 // Disable Next.js' default body parser
 
@@ -23,9 +25,15 @@ export async function POST(req, res) {
 
       // Ensure that a tag is provided
 
-      const newFilename = file.name + "-" + generateUUID();
-      const filePath = await save(file, newFilename);
-      console.log(filePath);
+      const newFilename = generateUUID() + "-" + file.name;
+      const [filePath, error] = await saveFile(file, newFilename);
+      if (error)
+        return NextResponse.next({
+          status: 500,
+          statusText:
+            "File could not be saved due to an internal server error.",
+        });
+
       uploadedFilePaths.push(filePath); // Store file paths to delete if needed
 
       try {
@@ -42,7 +50,14 @@ export async function POST(req, res) {
         });
       } catch (dbError) {
         // Rollback: delete the uploaded file if the DB operation fails
-        deleteFile(filePath);
+        const [_, error] = await deleteFile(filePath);
+        if (error)
+          return NextResponse.next({
+            status: 500,
+            statusText:
+              "File could not be deleted, image details could not be saved to the database",
+          });
+
         return Response.json({ error: "Error uploading files", dbError });
       }
     }
@@ -53,33 +68,27 @@ export async function POST(req, res) {
 }
 
 // Helper to handle file saving
-const saveFile = async (file): Promise<string> => {
-  const data = fs.readFileSync(file.filepath);
-  const uploadPath = path.join(
-    process.cwd(),
-    "/uploads",
-    file.newFilename || file.originalFilename,
-  );
-  fs.writeFileSync(uploadPath, data);
-  return uploadPath;
-};
 
-async function save(file: File, filename: string) {
-  const uploadPath = path.join(process.cwd(), "/uploads", filename);
-  console.log(file.type);
+async function saveFile(file: File, filename: string) {
+  const uploadPath = path.join(ADMIN_UPLOADS, filename);
+
   try {
     const bb = await file.arrayBuffer();
     const buffer = Buffer.from(bb);
-    fs.writeFileSync(uploadPath, buffer);
+    await fs.promises.writeFile(uploadPath, buffer);
+    return [uploadPath, undefined];
   } catch (error) {
-    console.log("e", error);
+    return [undefined, error];
   }
-
-  return uploadPath;
 }
 // Helper to delete a file
-const deleteFile = (filePath: string) => {
-  fs.unlinkSync(filePath);
+const deleteFile = async (filePath: string) => {
+  try {
+    await fs.promises.unlink(filePath);
+    return [true, undefined];
+  } catch (error) {
+    return [undefined, error];
+  }
 };
 
 function convertFormDataArrayToObject(formDataArray) {

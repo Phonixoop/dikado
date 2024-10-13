@@ -11,8 +11,6 @@ import CategoryForm from "~/app/admin/categories/form";
 import { CategoriesList } from "~/app/admin/categories/list";
 
 export default async function CategoriesPage() {
-  const session = await getServerAuthSession();
-
   return (
     <Container className="flex flex-col-reverse items-stretch gap-10 py-10 2xl:flex-row">
       <CategoryProvider>
