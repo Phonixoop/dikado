@@ -45,17 +45,10 @@ export function CategoriesList() {
             ? row.original.icon_url.substring(1)
             : row.original.icon_url;
 
-          const url = path.join(
-            process.env.NEXT_PUBLIC_BASE_URL,
-            "api",
-
-            sanitizedIconUrl,
-          );
-
           return (
             <>
               <Image
-                src={url}
+                src={sanitizedIconUrl}
                 height={100}
                 width={100}
                 alt={row.original.name}
@@ -70,10 +63,11 @@ export function CategoriesList() {
         accessorKey: "actions",
         cell: ({ row }) => (
           <ButtonWithConfirmation
+            className="bg-amber-200 text-amber-700"
             onConfirm={() => deleteCategory.mutate({ id: row.original.id })}
             title="حذف دسته بندی"
           >
-            Delete
+            حذف
           </ButtonWithConfirmation>
         ),
       },
@@ -93,8 +87,4 @@ export function CategoriesList() {
       onDelete={(category) => console.log("Delete category", category)}
     />
   );
-}
-
-function IconsGallery() {
-  return <></>;
 }

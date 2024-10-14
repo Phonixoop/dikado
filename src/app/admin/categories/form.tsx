@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
 //UI
 
@@ -16,6 +16,11 @@ import { Category } from "@prisma/client";
 import { useCategory } from "~/context/category.context";
 import FileUpload from "~/features/file-upload";
 import TextField from "~/ui/forms/text-field";
+import { GalleryView } from "~/features/gallery-view";
+import Modal from "~/ui/modals";
+
+import { cn } from "~/lib/utils";
+import Image from "next/image";
 
 const TextFieldWithLable = withLabel(TextField);
 
@@ -33,7 +38,9 @@ type CategoryType = {
 })*/
 export default function CategoryForm() {
   const { selectedRowCategory, setSelectedRowCategory } = useCategory();
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const utils = api.useUtils();
+
   const createCategory = api.category.create.useMutation({
     onSuccess: async () => {
       await utils.category.getCategories.invalidate();
@@ -53,30 +60,15 @@ export default function CategoryForm() {
     },
     validationSchema: toFormikValidationSchema(createCategorySchema),
     onSubmit: async (values) => {
-      const formData = new FormData();
-      formData.append("file", values.file);
-
-      const response = await fetch("/api/upload_icon", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data?.fileUrl?.length <= 0) {
-        toast("خطا در آپلود فایل");
-        return;
-      }
-
       if (!selectedRowCategory)
         return createCategory.mutate({
-          icon_url: data.fileUrl,
+          icon_url: values.icon_url,
           name: values.name,
         });
 
       return updateCategory.mutate({
         id: selectedRowCategory.id,
-        icon_url: data.fileUrl,
+        icon_url: values.icon_url,
         name: values.name,
       });
     },
@@ -123,15 +115,25 @@ export default function CategoryForm() {
             />
             <InputError message={formik.errors.name} />
           </div>
-          <div className="w-full">
-            <input
-              type="file"
-              onChange={(event) => {
-                formik.setFieldValue("file", event.currentTarget.files[0]);
-              }}
-            />
-          </div>
 
+          <div className="flex w-full items-start justify-start gap-2">
+            <Button
+              onClick={() => {
+                setIsGalleryOpen(true);
+              }}
+              className="w-1/2 bg-accent text-primary"
+            >
+              انتخاب آیکون
+            </Button>
+            {formik.values.icon_url && (
+              <Image
+                src={formik.values.icon_url}
+                width={50}
+                height={50}
+                alt={formik.values.name}
+              />
+            )}
+          </div>
           <Button
             type="submit"
             isLoading={createCategory.isPending}
@@ -141,9 +143,52 @@ export default function CategoryForm() {
           </Button>
         </div>
       </form>
-      <div className="w-full">
-        <FileUpload />
-      </div>
+
+      <Modal
+        title="انتخاب آیکون"
+        size="md"
+        center
+        className="bg-secondary/80"
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+      >
+        <div className="flex flex-col items-center justify-center p-2">
+          <OpenBox
+            title="آپلود رسانه"
+            closeText="بستن"
+            className="border border-dashed text-primary"
+          >
+            <div className="w-full py-2">
+              <FileUpload />
+            </div>
+          </OpenBox>
+
+          <GalleryView
+            className="w-full"
+            pickable
+            onSelected={(file) => {
+              setIsGalleryOpen(false);
+              formik.setFieldValue("icon_url", file.url);
+            }}
+          />
+        </div>
+      </Modal>
     </div>
+  );
+}
+
+function OpenBox({ children, className = "", title = "", closeText = "" }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <Button
+        className={cn(className)}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        {isOpen ? closeText : title}
+      </Button>
+
+      {isOpen && children}
+    </>
   );
 }

@@ -11,6 +11,7 @@ import { cn } from "~/lib/utils";
 import axios from "axios";
 import Image from "next/image";
 import { toast } from "sonner";
+import { api } from "~/trpc/react";
 const TextFieldWithLable = withLabel(TextField);
 
 // Zod schema definition
@@ -36,6 +37,7 @@ const FileUpload: React.FC = () => {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const [files, setFiles] = useState<FileData[]>([]);
+  const utils = api.useUtils();
 
   const formik = useFormik({
     initialValues: {
@@ -60,7 +62,7 @@ const FileUpload: React.FC = () => {
           },
         });
         toast(`${files.length} فایل با موفقیت آپلود شد`);
-
+        utils.file.getFiles.invalidate();
         setFiles([]);
       } catch (error) {
         console.error("File upload failed", error); // Handle failure

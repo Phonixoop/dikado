@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 import DynamicList from "~/features/dynamic-list";
+import { cn } from "~/lib/utils";
 import { updateFileSchema } from "~/server/validations/file.validation";
 import { api } from "~/trpc/react";
 import Button from "~/ui/buttons";
@@ -29,6 +30,7 @@ type TFile = {
 };
 
 export function GalleryView({
+  className = "",
   pickable = false,
   onSelected = (file: TFile) => {},
 }) {
@@ -40,7 +42,7 @@ export function GalleryView({
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8">
+      <div className={cn("container mx-auto px-4 py-8", className)}>
         <h2 className="mb-6 text-center text-3xl font-semibold">رسانه ها</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {(files.data?.pages.flatMap((page) => page.items) || []).map(

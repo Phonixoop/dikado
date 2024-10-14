@@ -343,6 +343,10 @@ export default function Table({
                       // Prepare the row for display
                       // prepareRow(row);
                       // const { key, ...restRowProps } = row.getRowProps();
+                      console.log({
+                        id: row.original.id.toString(),
+                        clickedRowIndex,
+                      });
                       return (
                         // Apply the row props
                         <tr
@@ -353,7 +357,7 @@ export default function Table({
 
                           className={twMerge(
                             "group",
-                            index.toString() === clickedRowIndex
+                            row.original.id.toString() === clickedRowIndex
                               ? "bg-primary/20 hover:bg-primary/25"
                               : "hover:bg-primary/5",
                             hasClickAction
