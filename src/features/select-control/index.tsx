@@ -37,18 +37,18 @@ export function SelectControlled({
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-center gap-1  px-2 text-center sm:px-0",
+        "flex w-full items-center justify-center gap-1 px-2 text-center sm:px-0",
         className,
       )}
     >
       <MultiSelect
-        className="input_shift min-w-0 "
+        className="input_shift min-w-0"
         placeholder={title}
         placeholderSearch="جستجو..."
         defaultValue={[]}
         value={list.filter((a) => values.includes(a.value)).map((a) => a.label)}
         onValueChange={(c_values) => {
-          if (values.length <= 0) return onChange([]);
+          // if (values.length <= 0) return onChange([]);
           let _values = c_values.filter((a) => a);
 
           if (singleSelect) _values = [c_values[c_values.length - 1]];

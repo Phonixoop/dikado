@@ -60,7 +60,7 @@ export function GalleryView({
               return (
                 <>
                   <div
-                    key={index}
+                    key={file.id}
                     className="relative cursor-pointer"
                     onClick={() => {
                       const sanitizedIconUrl = file.url.startsWith("./")

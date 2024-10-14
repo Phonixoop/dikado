@@ -62,8 +62,21 @@ model Category {
     icon_url   String
     created_at DateTime  @default(now())
     updated_at DateTime?
+    brands     Brand[]   @relation("CategoryBrands")
+    brandId    String?
 
     @@map("categories")
+}
+
+model Brand {
+    id         String     @id @default(cuid())
+    name       String
+    image_url  String
+    categories Category[] @relation("CategoryBrands")
+    created_at DateTime   @default(now())
+    updated_at DateTime?
+
+    @@map("brands")
 }
 
 model File {

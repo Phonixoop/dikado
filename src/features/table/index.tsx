@@ -343,10 +343,7 @@ export default function Table({
                       // Prepare the row for display
                       // prepareRow(row);
                       // const { key, ...restRowProps } = row.getRowProps();
-                      console.log({
-                        id: row.original.id.toString(),
-                        clickedRowIndex,
-                      });
+
                       return (
                         // Apply the row props
                         <tr
@@ -355,7 +352,7 @@ export default function Table({
                           key={index}
                           // {...restRowProps}
 
-                          className={twMerge(
+                          className={cn(
                             "group",
                             row.original.id.toString() === clickedRowIndex
                               ? "bg-primary/20 hover:bg-primary/25"
@@ -381,6 +378,9 @@ export default function Table({
                                 className={twMerge(
                                   "z-10 border-l border-primary/50 bg-secondary text-center text-primary last:border-0 group-hover:bg-secondary/90",
                                   isSticky ? "lg:sticky" : "",
+                                  row.original.id.toString() === clickedRowIndex
+                                    ? "bg-secondary/20 hover:bg-primary/25"
+                                    : "hover:bg-primary/5",
                                 )}
                                 style={{
                                   right: getRightStickyPos(i),

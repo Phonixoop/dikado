@@ -6,40 +6,51 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import {
-  categoryIdSchema,
-  createCategorySchema,
-  updateCategorySchema,
-} from "~/server/validations/category.validation";
+  brandIdSchema,
+  createBrandSchema,
+  updateBrandSchema,
+} from "~/server/validations/brand.validation";
 
-export const categoryRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx, input }) => {
-    return await ctx.db.category.findMany();
-  }),
+export const brandRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(createCategorySchema)
+    .input(createBrandSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.category.create({
+      return ctx.db.brand.create({
         data: {
-          icon_url: input.icon_url,
+          image_url: input.image_url,
           name: input.name,
+          categories: {
+            connect:
+              input.categoryIds?.map((categoryId) => ({ id: categoryId })) ||
+              [],
+          },
         },
       });
     }),
 
   update: protectedProcedure
-    .input(updateCategorySchema)
+    .input(updateBrandSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.category.update({
+      console.log({
+        input: input.categoryIds?.map((categoryId) => ({ id: categoryId })),
+      });
+      return ctx.db.brand.update({
         where: { id: input.id },
         data: {
           id: input.id,
-          icon_url: input.icon_url,
+          image_url: input.image_url,
           name: input.name,
+          categories: {
+            set: [], // This will clear all existing categories
+            connect:
+              input.categoryIds?.map((categoryId) => ({ id: categoryId })) ||
+              [],
+          },
         },
       });
     }),
 
-  getCategories: publicProcedure
+  getBrands: publicProcedure
     .input(
       z.object({
         limit: z.number().min(1).max(100).nullish().default(10),
@@ -50,7 +61,7 @@ export const categoryRouter = createTRPCRouter({
       const limit = input.limit ?? 50;
       const { cursor } = input;
       const items =
-        (await ctx.db.category.findMany({
+        (await ctx.db.brand.findMany({
           take: limit + 1, // get an extra item at the end which we'll use as next cursor
           cursor: cursor ? { id: cursor } : undefined,
 
@@ -60,7 +71,8 @@ export const categoryRouter = createTRPCRouter({
           select: {
             id: true,
             name: true,
-            icon_url: true,
+            image_url: true,
+            categories: true,
           },
         })) || [];
       let nextCursor: typeof cursor | undefined = undefined;
@@ -74,19 +86,19 @@ export const categoryRouter = createTRPCRouter({
         nextCursor,
       };
     }),
-  getCategoryById: protectedProcedure
-    .input(categoryIdSchema)
+  getBrandById: protectedProcedure
+    .input(brandIdSchema)
     .query(async ({ input, ctx }) => {
-      return await ctx.db.category.findUnique({
+      return await ctx.db.brand.findUnique({
         where: {
           id: input.id,
         },
       });
     }),
-  deleteCategory: protectedProcedure
-    .input(categoryIdSchema)
+  deleteBrand: protectedProcedure
+    .input(brandIdSchema)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.category.delete({
+      return await ctx.db.brand.delete({
         where: {
           id: input.id,
         },

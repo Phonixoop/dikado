@@ -1,3 +1,4 @@
+import { brandRouter } from "~/server/api/routers/brand";
 import { categoryRouter } from "~/server/api/routers/category";
 import { fileRouter } from "~/server/api/routers/file";
 import { roleRouter } from "~/server/api/routers/role";
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   role: roleRouter,
   user: userRouter,
   category: categoryRouter,
+  brand: brandRouter,
   file: fileRouter,
 });
 

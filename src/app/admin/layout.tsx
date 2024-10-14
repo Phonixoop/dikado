@@ -1,44 +1,17 @@
-import { LayoutGroup } from "framer-motion";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import { LeftSide } from "~/app/admin/left-side";
+import SubContaier from "~/app/admin/sub-contaier";
+import { ADMIN_MENU_LIST } from "~/constants";
 import NextBreadcrumb from "~/features/breadcrumb";
 import DecideMobileOrDesktop from "~/features/decide-mobile-desktop";
 import Menu from "~/features/menu";
-import ThemeBox from "~/features/theme-box";
 import { getServerAuthSession } from "~/server/auth";
 import BlurBackground from "~/ui/blur-backgrounds";
-import Button from "~/ui/buttons";
 import { Container, ContainerBottomBorder } from "~/ui/containers";
-import ExitIcon from "~/ui/icons/exits";
-import NotificationIcon from "~/ui/icons/notification";
+import { getPathName } from "~/utils/util";
 
-const menuList = [
-  {
-    value: "کاربر ها",
-    link: "users",
-    description: `در این بخش می توانید کاربر های مد نظر خود را بسازید، ویرایش کنید و
-    یا حذف کنید و تنظیمات مربوط به آن ها را تغییر دهید`,
-  },
-
-  {
-    value: "سمت ها",
-    description: `در این بخش می توانید سمت های مد نظر خود را بسازید تا در بخش کاربر ها برای آن ها اعمال کنید`,
-    link: "roles",
-  },
-
-  {
-    value: "دسته بندی ها",
-    description: `در این بخش می توانید بر روی دسته بندی ویرایش های لازم را انجام دهید`,
-    link: "categories",
-  },
-  {
-    value: "رسانه ها",
-    description: `در این بخش می توانید بر روی رسانه ها  ویرایش های لازم را انجام دهید`,
-    link: "files",
-  },
-];
 export default async function AdminLayout({
   children,
 }: {
@@ -67,7 +40,7 @@ export default async function AdminLayout({
                   <span> {session?.user?.name}</span>
                 </Link>
                 <NextBreadcrumb
-                  menu={menuList}
+                  menu={ADMIN_MENU_LIST}
                   homeElement={""}
                   separator={<span> / </span>}
                   activeClasses="text-amber-500"
@@ -85,12 +58,10 @@ export default async function AdminLayout({
       </Container>
       <ContainerBottomBorder className="sticky top-0 z-50 flex pt-2 backdrop-blur-lg">
         <Container className="max2xl:w-full">
-          <Menu rootPath={"/admin"} list={menuList} />
+          <Menu rootPath={"/admin"} list={ADMIN_MENU_LIST} />
         </Container>
       </ContainerBottomBorder>
-      {/* {currentMenuItem && (
-        <LayoutSubContainer currentMenuItem={currentMenuItem} />
-      )} */}
+      <SubContaier />
       <ContainerBottomBorder className="h-full items-start bg-accent/5">
         {children}
       </ContainerBottomBorder>

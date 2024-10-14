@@ -41,6 +41,7 @@ export default function DynamicList<T>({
       <span className="text-primary">{flatData.length}</span>
 
       <Table
+        hasClickAction
         columns={flatData.length > 0 ? columns : []}
         data={flatData}
         clickedRowIndex={selectedRowId}
