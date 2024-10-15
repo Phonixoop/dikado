@@ -8,10 +8,39 @@ import {
 import {
   brandIdSchema,
   createBrandSchema,
+  filterBrandsByCategoriesSchema,
   updateBrandSchema,
 } from "~/server/validations/brand.validation";
 
 export const brandRouter = createTRPCRouter({
+  getAll: publicProcedure
+    .input(filterBrandsByCategoriesSchema)
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.brand.findMany({
+        where:
+          input.categoryNames.length > 0
+            ? {
+                categories: {
+                  some: {
+                    name: {
+                      in: input.categoryNames, // Filter by category names, or use `id` if filtering by IDs
+                    },
+                  },
+                },
+              }
+            : undefined, // If categories array is empty, no filter is applied
+      });
+    }),
+  getAllWithCategories: publicProcedure.query(async ({ ctx, input }) => {
+    return await ctx.db.brand.findMany({
+      select: {
+        id: true,
+        name: true,
+        image_url: true,
+        categories: true,
+      },
+    });
+  }),
   create: protectedProcedure
     .input(createBrandSchema)
     .mutation(async ({ ctx, input }) => {

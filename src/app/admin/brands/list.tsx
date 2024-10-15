@@ -42,14 +42,14 @@ export function BrandsList() {
         header: "image_url",
         accessorKey: "image_url",
         cell: ({ row }) => {
-          const sanitizedIconUrl = row.original.image_url.startsWith("./")
+          const sanitizedImageUrl = row.original.image_url.startsWith("./")
             ? row.original.image_url.substring(1)
             : row.original.image_url;
 
           return (
             <>
               <Image
-                src={sanitizedIconUrl}
+                src={sanitizedImageUrl}
                 height={100}
                 width={100}
                 alt={row.original.name}

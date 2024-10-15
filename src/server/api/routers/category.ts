@@ -15,6 +15,16 @@ export const categoryRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx, input }) => {
     return await ctx.db.category.findMany();
   }),
+  getAllWithBrands: publicProcedure.query(async ({ ctx, input }) => {
+    return await ctx.db.category.findMany({
+      select: {
+        id: true,
+        name: true,
+        icon_url: true,
+        brands: true,
+      },
+    });
+  }),
   create: protectedProcedure
     .input(createCategorySchema)
     .mutation(async ({ ctx, input }) => {

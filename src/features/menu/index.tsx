@@ -9,6 +9,15 @@ import { useRouter, usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import { ChevronDownIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import Button from "~/ui/buttons";
+
+function createUrl(...segments) {
+  // Filter out empty segments and join with a single slash
+  return segments
+    .filter((segment) => segment) // Remove any empty segments
+    .map((segment) => segment.replace(/^\/+|\/+$/g, "")) // Remove leading and trailing slashes from each segment
+    .join("/"); // Join with a single slash
+}
+
 export type MenuItem = {
   value: string;
   link: string;
@@ -20,6 +29,7 @@ type MenuInput = {
   list: MenuItem[];
   theme?: "solid" | "round";
   isSub?: boolean;
+  pathName?: string;
 };
 export default function Menu({
   className = "",
@@ -27,15 +37,16 @@ export default function Menu({
   list = [],
   theme = "solid",
   isSub = false,
+  pathName = "",
 }: MenuInput) {
   const [activeIndex, setActiveIndex] = useState(-1);
-  const pathName = usePathname();
+  const _pathName = pathName ?? usePathname();
 
   return (
     <motion.div
       className={twMerge(
-        "  z-0 flex w-full cursor-pointer items-stretch gap-3 overflow-hidden overflow-x-auto  px-1 py-1  scrollbar-none md:w-fit md:max-w-full",
-        theme === "solid" ? "" : "rounded-[30px]  bg-secbuttn",
+        "z-0 flex w-full cursor-pointer items-stretch gap-3 overflow-hidden overflow-x-auto px-1 py-1 scrollbar-none md:w-fit md:max-w-full",
+        theme === "solid" ? "" : "rounded-[30px] bg-secbuttn",
         className,
       )}
       onHoverEnd={() => {
@@ -45,7 +56,7 @@ export default function Menu({
       {list.map((item, i) => {
         return (
           <motion.span
-            className=" flex w-full min-w-fit items-center justify-center"
+            className="flex w-full min-w-fit items-center justify-center"
             key={i}
             onHoverStart={() => {
               setActiveIndex(i);
@@ -56,7 +67,7 @@ export default function Menu({
               index={i}
               rootPath={rootPath}
               activeIndex={activeIndex}
-              pathName={pathName}
+              pathName={_pathName}
               theme={theme}
               isSub={isSub}
             />
@@ -81,14 +92,17 @@ function MenuItem({
 
   const { link, value } = item;
   return (
-    <Link href={`${rootPath}/${link}`} className=" group w-full text-center">
+    <Link
+      href={rootPath + "" + link.replace("/", "")}
+      className="group w-full text-center"
+    >
       <div
         className={twMerge(
-          "  relative z-0 flex items-center justify-center  gap-2 rounded-sm px-3 py-2 text-sm",
-          isActive ? "text-accent hover:text-secondary" : " text-accent",
+          "relative z-0 flex items-center justify-center gap-2 rounded-sm px-3 py-2 text-sm",
+          isActive ? "text-accent hover:text-secondary" : "text-accent",
           isHovered ? "text-accent" : "",
           isSub ? "bg-secondary text-primary hover:text-accent" : "",
-          theme === "solid" ? "rounded-md" : "rounded-full ",
+          theme === "solid" ? "rounded-md" : "rounded-full",
         )}
       >
         {isHovered && (
@@ -98,8 +112,8 @@ function MenuItem({
             }}
             layoutId="bg-follower"
             className={twMerge(
-              "absolute inset-0 -z-10 bg-primary text-accent  opacity-0 transition-opacity duration-1000 group-hover:opacity-100 ",
-              theme === "solid" ? "rounded-md" : "rounded-full ",
+              "absolute inset-0 -z-10 bg-primary text-accent opacity-0 transition-opacity duration-1000 group-hover:opacity-100",
+              theme === "solid" ? "rounded-md" : "rounded-full",
             )}
           />
         )}
@@ -107,11 +121,11 @@ function MenuItem({
         {isActive && (
           <motion.div
             layoutId="underline"
-            className="absolute -bottom-[5px] left-0 -z-10 h-[3px]  w-full  rounded-full bg-primary text-accent"
+            className="absolute -bottom-[5px] left-0 -z-10 h-[3px] w-full rounded-full bg-primary text-accent"
           />
         )}
 
-        <span className=" group-hover:text-inherit/50 text-inherit  duration-100">
+        <span className="group-hover:text-inherit/50 text-inherit duration-100">
           {value}
         </span>
         {item.subMenu && (
@@ -165,7 +179,7 @@ export function InPageMenu({
       {!collapsedUi ? (
         <motion.div
           className={twMerge(
-            "group flex cursor-pointer items-center justify-start  gap-3 overflow-hidden overflow-x-auto scrollbar-none ",
+            "group flex cursor-pointer items-center justify-start gap-3 overflow-hidden overflow-x-auto scrollbar-none",
             className,
           )}
           onHoverEnd={() => {
@@ -209,7 +223,7 @@ export function InPageMenu({
             <Button
               disabled={activeIndex + 1 > items.length - 1 || list.length <= 0}
               className={twMerge(
-                "group  left-1 z-20 rounded-full p-1.5 ring-1 ring-primary transition duration-500   hover:ring-accent  disabled:bg-transparent disabled:ring-transparent",
+                "group left-1 z-20 rounded-full p-1.5 ring-1 ring-primary transition duration-500 hover:ring-accent disabled:bg-transparent disabled:ring-transparent",
                 activeIndex + 1 > items.length - 1 || list.length <= 0
                   ? ""
                   : "hover:bg-accent/20",
@@ -225,7 +239,7 @@ export function InPageMenu({
             >
               <ChevronRight
                 className={twMerge(
-                  "h-5 w-5 stroke-primary  group-disabled:stroke-primary/20 ",
+                  "h-5 w-5 stroke-primary group-disabled:stroke-primary/20",
                   activeIndex + 1 > items.length - 1 || list.length <= 0
                     ? ""
                     : "group-hover:stroke-accent",
@@ -235,7 +249,7 @@ export function InPageMenu({
             <Button
               disabled={activeIndex - 1 < 0 || list.length <= 0}
               className={twMerge(
-                "group  left-1 z-20 rounded-full p-1.5 ring-1 ring-primary transition duration-500   hover:ring-accent  disabled:bg-transparent disabled:ring-transparent",
+                "group left-1 z-20 rounded-full p-1.5 ring-1 ring-primary transition duration-500 hover:ring-accent disabled:bg-transparent disabled:ring-transparent",
                 activeIndex - 1 < 0 || list.length <= 0
                   ? ""
                   : "hover:bg-accent/20",
@@ -251,7 +265,7 @@ export function InPageMenu({
             >
               <ChevronLeft
                 className={twMerge(
-                  "h-5 w-5 stroke-primary  group-disabled:stroke-primary/20 ",
+                  "h-5 w-5 stroke-primary group-disabled:stroke-primary/20",
                   activeIndex - 1 < 0 ? "" : "group-hover:stroke-accent",
                 )}
               />
@@ -267,8 +281,8 @@ export function InPageMenu({
 function InPageMenuItem({ text, isHovered = false, isActive = false }) {
   return (
     <div
-      className={`relative z-0 rounded-sm px-5  pb-4 pt-2 text-sm ${
-        isActive ? "text-primary" : "text-primary/50  hover:text-primary"
+      className={`relative z-0 rounded-sm px-5 pb-4 pt-2 text-sm ${
+        isActive ? "text-primary" : "text-primary/50 hover:text-primary"
       } `}
     >
       {isHovered && (
@@ -277,7 +291,7 @@ function InPageMenuItem({ text, isHovered = false, isActive = false }) {
             duration: 0.15,
           }}
           layoutId="bg-follower-inpage"
-          className="absolute inset-0 -z-10 h-[80%] rounded-md bg-primbuttn/30 opacity-0 transition-opacity duration-1000 group-hover:opacity-100 "
+          className="absolute inset-0 -z-10 h-[80%] rounded-md bg-primbuttn/30 opacity-0 transition-opacity duration-1000 group-hover:opacity-100"
         />
       )}
 
@@ -285,19 +299,19 @@ function InPageMenuItem({ text, isHovered = false, isActive = false }) {
         <>
           <motion.div
             layoutId="underline-inpage"
-            className="absolute -bottom-[2px] left-0 -z-10 h-[3px]  w-full  rounded-full bg-primbuttn"
+            className="absolute -bottom-[2px] left-0 -z-10 h-[3px] w-full rounded-full bg-primbuttn"
           />
           <motion.div
             transition={{
               duration: 0.15,
             }}
             layoutId="bg-follower-inpage"
-            className="absolute inset-0 -z-10 h-[80%] rounded-md border border-primary  transition-opacity duration-1000  "
+            className="absolute inset-0 -z-10 h-[80%] rounded-md border border-primary transition-opacity duration-1000"
           />
         </>
       )}
 
-      <span className=" duration-100 ">{text}</span>
+      <span className="duration-100">{text}</span>
     </div>
   );
 }

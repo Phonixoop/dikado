@@ -99,7 +99,6 @@ export default function BrandForm() {
   }, [selectedRowBrand]);
   return (
     <div className="flex w-full flex-col gap-4">
-      {selectedRowBrand?.categories?.length ?? 0}
       <form
         onSubmit={formik.handleSubmit}
         dir="rtl"
@@ -180,7 +179,6 @@ export default function BrandForm() {
           </Button>
         </div>
       </form>
-
       <Modal
         title="انتخاب عکس"
         size="md"

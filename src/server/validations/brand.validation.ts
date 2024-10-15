@@ -21,3 +21,13 @@ export const createBrandSchema = z.object({
 export const brandIdSchema = z.object({
   id: z.string({ required_error: "این فیلد اجباری است" }),
 });
+
+export const filterBrandsByCategoriesSchema = z.object({
+  categoryNames: z
+    .array(
+      z
+        .string({ required_error: "این فیلد اجباری است" })
+        .min(3, "نام دسته بندی نمی تواند کمتر از 3 کاراکتر باشد"),
+    )
+    .optional(),
+});

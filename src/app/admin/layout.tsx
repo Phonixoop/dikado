@@ -4,7 +4,7 @@ import React from "react";
 import { LeftSide } from "~/app/admin/left-side";
 import SubContaier from "~/app/admin/sub-contaier";
 import { ADMIN_MENU_LIST } from "~/constants";
-import NextBreadcrumb from "~/features/breadcrumb";
+import NextBreadcrumb from "~/features/nextBreadcrumb";
 import DecideMobileOrDesktop from "~/features/decide-mobile-desktop";
 import Menu from "~/features/menu";
 import { getServerAuthSession } from "~/server/auth";
@@ -58,7 +58,7 @@ export default async function AdminLayout({
       </Container>
       <ContainerBottomBorder className="sticky top-0 z-50 flex pt-2 backdrop-blur-lg">
         <Container className="max2xl:w-full">
-          <Menu rootPath={"/admin"} list={ADMIN_MENU_LIST} />
+          <Menu rootPath={"/admin/"} list={ADMIN_MENU_LIST} />
         </Container>
       </ContainerBottomBorder>
       <SubContaier />
