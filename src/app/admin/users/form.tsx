@@ -50,8 +50,6 @@ function ButtonForChangePasswordModal({ children, ...rest }) {
 const PasswordFieldWithModal = withModalState(ButtonForChangePasswordModal);
 
 export function UserForm({
-  onCreateSuccess = (user: User) => {},
-  onClearUser = () => {},
   sessionUser,
 }: {
   sessionUser?: User | undefined;
@@ -60,6 +58,7 @@ export function UserForm({
   onClearUser?: () => any;
 }) {
   const getRole = api.role.getAll.useQuery();
+  const getBrands = api.brand.getAll.useQuery({});
   const { selectedRowUser, setSelectedRowUser } = useUser();
   const utils = api.useUtils();
   const user = sessionUser ?? selectedRowUser ?? undefined;
@@ -87,11 +86,12 @@ export function UserForm({
 
   const formik = useFormik({
     initialValues: {
-      username: selectedRowUser?.username || "",
+      username: selectedRowUser?.username ?? "",
       // i know its bad to return password from server even hashed password
-      password: selectedRowUser?.password || "",
-      display_name: selectedRowUser?.display_name || "",
-      roleId: selectedRowUser?.roleId || "",
+      password: selectedRowUser?.password ?? "",
+      display_name: selectedRowUser?.display_name ?? "",
+      roleId: selectedRowUser?.roleId ?? "",
+      brandIds: selectedRowUser?.brands.map((a) => a.id) ?? [],
     },
 
     validationSchema: toFormikValidationSchema(
@@ -101,17 +101,19 @@ export function UserForm({
     onSubmit: (values: typeof createUserSchema._type) => {
       if (!user)
         return createUser.mutate({
-          username: values?.username || "",
-          password: values?.password || "",
-          display_name: values?.display_name || "",
+          username: values?.username ?? "",
+          password: values?.password ?? "",
+          display_name: values?.display_name ?? "",
           roleId: values.roleId,
+          brandIds: values?.brandIds ?? [],
         });
 
       return updateUser.mutate({
         id: selectedRowUser.id,
-        username: values?.username || "",
-        display_name: values?.display_name || "",
+        username: values?.username ?? "",
+        display_name: values?.display_name ?? "",
         roleId: values.roleId,
+        brandIds: values?.brandIds ?? [],
       });
     },
   });
@@ -120,13 +122,14 @@ export function UserForm({
     formik.setValues((a) => {
       return {
         id: selectedRowUser?.id ?? "",
-        username: selectedRowUser?.username || "",
+        username: selectedRowUser?.username ?? "",
         password: "",
-        display_name: selectedRowUser?.display_name || "",
-        roleId: selectedRowUser?.roleId || "",
+        display_name: selectedRowUser?.display_name ?? "",
+        roleId: selectedRowUser?.roleId ?? "",
+        brandIds: selectedRowUser?.brands.map((a) => a.id) ?? [],
       };
     });
-  }, [user, selectedRowUser]);
+  }, [user]);
 
   return (
     <>
@@ -142,7 +145,7 @@ export function UserForm({
             onClick={() => {
               setSelectedRowUser(undefined);
             }}
-            className="absolute -top-10  border border-accent/10 bg-secondary text-primbuttn hover:bg-accent hover:text-secbuttn"
+            className="absolute -top-10 border border-accent/10 bg-secondary text-primbuttn hover:bg-accent hover:text-secbuttn"
           >
             ساخت کاربر جدید +
           </Button>
@@ -181,7 +184,7 @@ export function UserForm({
                       fieldProps={formik.getFieldProps("password")}
                       errors={formik.errors.password}
                     />
-                    <div className="flex w-full items-center justify-between gap-4 ">
+                    <div className="flex w-full items-center justify-between gap-4">
                       <Button
                         type="submit"
                         isLoading={updateUserPassword.isPending}
@@ -221,7 +224,8 @@ export function UserForm({
           <InputError message={formik.errors.display_name} />
         </div>
 
-        <div className="z-30  flex w-full flex-col items-start justify-start gap-5">
+        <div className="z-30 flex w-full flex-col items-start justify-start gap-5">
+          <h3 className="text-primary">نقش</h3>
           {!getRole.isPending && getRole.data && (
             <>
               <SelectControlled
@@ -241,9 +245,34 @@ export function UserForm({
           )}
           <InputError message={formik.errors.roleId} />
         </div>
+        <div className="z-20 flex w-full flex-col items-start justify-start gap-5">
+          <h3 className="text-primary">برند</h3>
+          {!getBrands.isPending && getBrands.data && (
+            <>
+              <SelectControlled
+                singleSelect
+                className="min-w-80"
+                title={"جستجو برند"}
+                list={getBrands.data.map((brand) => ({
+                  label: brand.name,
+                  value: brand.id,
+                }))}
+                values={formik.values.brandIds ?? []}
+                onChange={(values: { label: string; value: string }[]) => {
+                  const [firstValue] = values;
+                  formik.setFieldValue(
+                    "brandIds",
+                    firstValue?.value ? [firstValue.value] : [],
+                  );
+                }}
+              />
+            </>
+          )}
+          {/* <InputError message={formik.errors?.brandIds[0]} /> */}
+        </div>
         <Button
           disabled={!formik.isValid}
-          isLoading={createUser.isPending || updateUser.isPending}
+          isLoading={createUser.isPending ?? updateUser.isPending}
           type="submit"
           className="w-full rounded-xl bg-primbuttn text-secondary"
         >
@@ -274,7 +303,7 @@ export default function MultiSelectBox({
             <span
               className={`${
                 isSelected(item.key) ? className : "ring-1 ring-gray-300"
-              } w-auto cursor-pointer select-none rounded-full  px-3 py-2 text-primary hover:shadow-md`}
+              } w-auto cursor-pointer select-none rounded-full px-3 py-2 text-primary hover:shadow-md`}
               key={item.key}
               onClick={() => {
                 setSelectedKeys((prev) => {

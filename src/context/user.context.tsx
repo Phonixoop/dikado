@@ -1,5 +1,5 @@
 "use client";
-import { User } from "@prisma/client";
+import { User } from "~/types";
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 
 type TUserContext = {

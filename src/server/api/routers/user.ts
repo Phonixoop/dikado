@@ -23,8 +23,12 @@ export const userRouter = createTRPCRouter({
       return await ctx.db.user.create({
         data: {
           username: input.username,
+          display_name: input?.display_name,
           password: hashPassword(input.password),
           roleId: input.roleId,
+          brands: {
+            connect: input.brandIds?.map((brandId) => ({ id: brandId })) || [],
+          },
         },
       });
     }),
@@ -39,6 +43,10 @@ export const userRouter = createTRPCRouter({
           username: input.username,
           roleId: input.roleId,
           display_name: input.display_name,
+          brands: {
+            set: [],
+            connect: input.brandIds?.map((brandId) => ({ id: brandId })) || [],
+          },
         },
       });
     }),
@@ -70,6 +78,7 @@ export const userRouter = createTRPCRouter({
           cursor: cursor ? { id: cursor } : undefined,
           include: {
             role: true,
+            brands: true,
           },
           orderBy: {
             created_at: "desc",

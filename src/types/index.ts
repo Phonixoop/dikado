@@ -1,4 +1,4 @@
-import { Role, User as PrismaUser } from "@prisma/client";
+import { Role, User as PrismaUser, Brand } from "@prisma/client";
 
 export type TremorColor =
   | "slate"
@@ -32,7 +32,7 @@ export type Permission = {
   subPermissions?: Permission[];
 };
 
-export type User = PrismaUser & { role?: Role };
+export type User = PrismaUser & { role?: Role; brands?: Brand[] };
 
 export type CityWithPerformanceData = {
   CityName_En: string;

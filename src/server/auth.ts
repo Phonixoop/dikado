@@ -64,6 +64,7 @@ export const authOptions: NextAuthOptions = {
           },
           include: {
             role: true,
+            brands: true,
           },
         });
 
@@ -75,19 +76,20 @@ export const authOptions: NextAuthOptions = {
             },
             include: {
               role: true,
+              brands: true,
             },
           });
 
-          if (loggedInUser.role?.permissions) {
-            const permissions: Permission[] = JSON.parse(
-              loggedInUser.role.permissions,
-            );
-            if (
-              permissions.find((a) => a.id === "ManageUsers")?.isActive === true
-            ) {
-              return user;
-            } else return;
-          }
+          // if (loggedInUser.role?.permissions) {
+          //   const permissions: Permission[] = JSON.parse(
+          //     loggedInUser.role.permissions,
+          //   );
+          //   if (
+          //     permissions.find((a) => a.id === "ManageUsers")?.isActive === true
+          //   ) {
+          //     return user;
+          //   } else return;
+          // }
         } else if (user) {
           if (
             compareHashPassword(credentials.password, user.password).success
@@ -115,7 +117,7 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, token }: { session: any; token: any }) => {
       const user = await db.user.findUnique({
         where: { username: token.user.username },
-        include: { role: true },
+        include: { role: true, brands: true },
       });
       session.user = user;
       return session;

@@ -18,7 +18,7 @@ export const brandRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return await ctx.db.brand.findMany({
         where:
-          input.categoryNames.length > 0
+          input.categoryNames?.length > 0
             ? {
                 categories: {
                   some: {
@@ -60,9 +60,6 @@ export const brandRouter = createTRPCRouter({
   update: protectedProcedure
     .input(updateBrandSchema)
     .mutation(async ({ ctx, input }) => {
-      console.log({
-        input: input.categoryIds?.map((categoryId) => ({ id: categoryId })),
-      });
       return ctx.db.brand.update({
         where: { id: input.id },
         data: {

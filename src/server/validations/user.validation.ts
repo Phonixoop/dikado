@@ -9,6 +9,7 @@ export const createUserSchema = z.object({
     .min(6, "پسورد نمیتواند کمتر از 6 کاراکتر باشد."),
   display_name: z.string().nullish().optional(),
   roleId: z.string({ required_error: "این فیلد اجباری است" }),
+  brandIds: z.array(z.string()).optional(),
 });
 
 export const updateUserSchema = z.object({
@@ -18,6 +19,7 @@ export const updateUserSchema = z.object({
     .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد"),
   display_name: z.string().nullable().optional(),
   roleId: z.string({ required_error: "این فیلد اجباری است" }),
+  brandIds: z.array(z.string()).optional(),
 });
 
 export const updateUserPassword = z.object({
