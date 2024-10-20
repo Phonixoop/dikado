@@ -1,3 +1,4 @@
+"use client";
 import React, {
   useState,
   FC,
@@ -43,11 +44,7 @@ function withLabel<T>(Component: FC<T>) {
 
         <label
           onClick={() => setFocused(true)}
-          className="absolute right-2.5 top-4 z-10
-          origin-top-right -translate-y-4 scale-75 transform select-none text-sm
-          text-primary duration-300 peer-placeholder-shown:translate-y-0
-          peer-placeholder-shown:scale-100 peer-focus:-translate-y-4
-          peer-focus:scale-75 peer-focus:text-accent"
+          className="absolute right-2.5 top-4 z-10 origin-top-right -translate-y-4 scale-75 transform select-none text-sm text-primary duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:text-accent"
         >
           {label}
         </label>

@@ -2,12 +2,14 @@ import React, { FC } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import Button from "~/ui/buttons";
+import { useMultiStep } from "~/context/multiform.context";
 
 // Define the props interface
 interface MultiStepProps {
+  children: React.ReactNode;
   currentStep?: number;
   isLoading?: boolean;
-  loadingStep?: number;
+  loadingSteps?: number[];
   onStepClick?: (step: number) => void;
   icons?: React.ReactNode[];
   steps?: React.ReactNode[];
@@ -17,23 +19,25 @@ interface MultiStepProps {
 
 // Define the component with props typed
 const MultiStep: FC<MultiStepProps> = ({
-  currentStep = 0,
+  children,
+
   isLoading = false,
-  loadingStep = -1,
+  loadingSteps = [],
   onStepClick = (step: number) => {},
   icons = [],
   steps = [],
-  onNext = () => {},
-  onPrevious = () => {},
 }) => {
+  const { currentStepIndex, previousStep, nextStep, goToStep } = useMultiStep();
+  const stepsArray = React.Children.toArray(children);
+  const currentStepNode: React.ReactNode = stepsArray[currentStepIndex];
   return (
     <div className="flex w-full flex-col items-center justify-center gap-5">
       <div className="relative flex min-h-[150px] w-full items-center justify-center gap-2 overflow-hidden md:w-2/3">
         <div className="absolute z-0 h-[1px] w-11/12 bg-gradient-to-r from-transparent from-0% via-accent via-50% to-transparent to-100%">
-          {currentStep === loadingStep && (
+          {loadingSteps.includes(currentStepIndex) && (
             <div
               style={{
-                left: `${Math.min(currentStep * 10, 100)}%`,
+                left: `${Math.min(currentStepIndex * 10, 100)}%`,
               }}
               className="absolute left-[50.5%] top-0 -z-10 hidden h-[28px] w-[40%] transition-all duration-300 sm:block"
             >
@@ -92,10 +96,10 @@ const MultiStep: FC<MultiStepProps> = ({
             disabled={isLoading}
             className={twMerge(
               "group absolute left-1 z-20 rounded-full p-1.5 ring-1 ring-accent transition duration-500 hover:bg-accent/20 hover:ring-secondary",
-              currentStep === 0 ? "opacity-0" : "opacity-100",
+              currentStepIndex === 0 ? "opacity-0" : "opacity-100",
             )}
             onClick={() => {
-              if (currentStep - 1 >= 0) onPrevious();
+              if (currentStepIndex - 1 >= 0) previousStep();
             }}
           >
             <ChevronLeft className="h-5 w-5 stroke-primbuttn group-hover:stroke-accent" />
@@ -104,10 +108,12 @@ const MultiStep: FC<MultiStepProps> = ({
             disabled={isLoading}
             className={twMerge(
               "group absolute right-1 z-20 rounded-full p-1.5 ring-1 ring-accent transition duration-500 hover:bg-accent/20 hover:ring-secondary",
-              currentStep === icons.length - 1 ? "opacity-0" : "opacity-100",
+              currentStepIndex === icons.length - 1
+                ? "opacity-0"
+                : "opacity-100",
             )}
             onClick={() => {
-              if (currentStep + 1 <= icons.length - 1) onNext();
+              if (currentStepIndex + 1 <= icons.length - 1) nextStep();
             }}
           >
             <ChevronRight className="h-5 w-5 stroke-primbuttn group-hover:stroke-accent" />
@@ -115,38 +121,38 @@ const MultiStep: FC<MultiStepProps> = ({
         </div>
         <div className="relative flex h-full w-full items-center justify-center gap-10">
           {icons.map((icon, i) => {
-            const offset = currentStep === icons.length ? 25 : 28;
+            const offset = currentStepIndex === icons.length ? 25 : 28;
             const currentLeft = offset + i * offset;
-            const distance = Math.abs(currentStep - i);
+            const distance = Math.abs(currentStepIndex - i);
             const scale =
               distance === 1 ? "100%" : distance === 2 ? "70%" : "0%";
             return (
               <button
                 disabled={isLoading}
                 key={i}
-                onClick={() => onStepClick(i)}
+                onClick={() => goToStep(i)}
                 className={twMerge(
                   "z-1 absolute flex -translate-x-1/2 scale-75 cursor-pointer rounded-full transition-all duration-200",
-                  currentStep === i
+                  currentStepIndex === i
                     ? "bg-primary stroke-secbuttn"
                     : "bg-secondary stroke-accent opacity-0 sm:opacity-100",
-                  i === loadingStep ? "sm:bottom-5" : "",
+                  loadingSteps.includes(i) ? "sm:bottom-5" : "",
                 )}
                 style={{
                   left:
-                    currentStep === i
+                    currentStepIndex === i
                       ? `${50}%`
-                      : `${Math.min(currentLeft - currentStep * 20, 100)}%`,
-                  scale: currentStep === i ? "130%" : scale,
+                      : `${Math.min(currentLeft - currentStepIndex * 20, 100)}%`,
+                  scale: currentStepIndex === i ? "130%" : scale,
                 }}
               >
                 <span
                   className={twMerge(
                     "cursor-pointer rounded-full border stroke-inherit p-3 transition-all duration-1000",
-                    currentStep === i
+                    currentStepIndex === i
                       ? "border-primary opacity-100"
                       : "border-accent/50 bg-accent/20 opacity-50",
-                    currentStep === loadingStep && i === loadingStep
+                    currentStepIndex === i && loadingSteps.includes(i)
                       ? "animate-spin"
                       : "",
                   )}
@@ -158,11 +164,7 @@ const MultiStep: FC<MultiStepProps> = ({
           })}
         </div>
       </div>
-      {steps.map((step, i) => {
-        if (i === currentStep)
-          return <React.Fragment key={i}>{step}</React.Fragment>;
-        return null;
-      })}
+      {currentStepNode}
     </div>
   );
 };

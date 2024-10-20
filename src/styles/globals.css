@@ -49,12 +49,19 @@
   --accent: 85, 119, 97;
 } */
 
-.theme-light-4 {
+/* .theme-light-4 {
   --primary: 8, 12, 10;
   --secondary: 206, 204, 188;
   --primbuttn: 61, 87, 71;
   --secbuttn: 197, 188, 171;
   --accent: 85, 119, 97;
+} */
+.theme-light-4 {
+  --primary: 25, 10, 35;
+  --secondary: 245, 240, 255;
+  --primbuttn: 255, 140, 50;
+  --secbuttn: 200, 180, 255;
+  --accent: 130, 80, 200;
 }
 
 .theme {
@@ -92,6 +99,13 @@
 
   --accent: 226, 112, 33;
 }
+/* .theme-dark-1 {
+  --primary: 245, 240, 255;
+  --secondary: 25, 10, 35;
+  --primbuttn: 255, 140, 50;
+  --secbuttn: 70, 40, 100;
+  --accent: 130, 80, 200;
+} */
 
 .theme-dark-2 {
   --primary: 217, 242, 240;

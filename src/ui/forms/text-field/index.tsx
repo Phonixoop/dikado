@@ -1,3 +1,4 @@
+"use client";
 import {
   useEffect,
   useRef,
@@ -5,10 +6,11 @@ import {
   ChangeEvent,
   ComponentPropsWithoutRef,
   Ref,
+  ComponentProps,
 } from "react";
 import { twMerge } from "tailwind-merge";
 
-interface TextFieldProps {
+type TextFieldProps = {
   children?: JSX.Element | string;
   className?: string;
   value: string;
@@ -20,7 +22,7 @@ interface TextFieldProps {
   onValueChange?: (value: string) => void;
   focused?: boolean;
   onFocus?: () => void;
-}
+} & ComponentProps<"input">;
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({ children = <>
 

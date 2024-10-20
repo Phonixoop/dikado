@@ -7,6 +7,7 @@ import {
 } from "~/server/api/trpc";
 import {
   brandIdSchema,
+  brandNameSchema,
   createBrandSchema,
   filterBrandsByCategoriesSchema,
   updateBrandSchema,
@@ -118,6 +119,24 @@ export const brandRouter = createTRPCRouter({
       return await ctx.db.brand.findUnique({
         where: {
           id: input.id,
+        },
+      });
+    }),
+  getBrandByName: protectedProcedure
+    .input(brandNameSchema)
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.brand.findUnique({
+        where: {
+          name: input.name,
+        },
+        select: {
+          name: true,
+          categories: {
+            select: {
+              name: true,
+            },
+          },
+          image_url: true,
         },
       });
     }),

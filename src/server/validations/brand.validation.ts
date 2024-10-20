@@ -22,6 +22,10 @@ export const brandIdSchema = z.object({
   id: z.string({ required_error: "این فیلد اجباری است" }),
 });
 
+export const brandNameSchema = z.object({
+  name: z.string({ required_error: "این فیلد اجباری است" }),
+});
+
 export const filterBrandsByCategoriesSchema = z.object({
   categoryNames: z
     .array(

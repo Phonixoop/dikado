@@ -31,10 +31,24 @@ export const userIdSchema = z.object({
 });
 
 export const userLoginSchema = z.object({
-  username: z
+  phonenumber: z
     .string({ required_error: "این فیلد اجباری است" })
-    .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد"),
-  password: z
+    .startsWith("09", "باید با 09 شروع شود")
+    .length(11, "باید 11 رقم باشد"),
+  code: z
     .string({ required_error: "این فیلد اجباری است" })
-    .min(6, "پسورد نمیتواند کمتر از 6 کاراکتر باشد."),
+    .length(4, "کد باید 4 رقم باشد"),
+});
+
+export const phonenumberSchema = z.object({
+  phonenumber: z
+    .string({ required_error: "این فیلد اجباری است" })
+    .startsWith("09", "باید با 09 شروع شود")
+    .length(11, "باید 11 رقم باشد"),
+});
+
+export const codeSchema = z.object({
+  code: z
+    .string({ required_error: "این فیلد اجباری است" })
+    .length(4, "کد باید 4 رقم باشد"),
 });

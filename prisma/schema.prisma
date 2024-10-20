@@ -7,25 +7,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model User {
-    id           String    @id @default(cuid())
-    name         String?
-    username     String    @unique
-    password     String
-    description  String?
-    is_active    Boolean   @default(true)
-    image_url    String?
-    display_name String?
-    created_at   DateTime  @default(now())
-    updated_at   DateTime?
-    roleId       String?
-    sessions     Session[]
-    role         Role?     @relation(fields: [roleId], references: [id])
-    brands       Brand[]
-
-    @@map("users")
-}
-
 model Role {
     id          String @id @default(cuid())
     name        String
@@ -57,6 +38,28 @@ model Verification_token {
     @@map("verification_tokens")
 }
 
+model User {
+    id           String    @id @default(cuid())
+    name         String?
+    username     String?   @unique
+    code         String?
+    phonenumber  String?   @unique
+    password     String
+    description  String?
+    is_active    Boolean   @default(true)
+    image_url    String?
+    display_name String?
+    created_at   DateTime  @default(now())
+    updated_at   DateTime?
+    roleId       String?
+    sessions     Session[]
+    role         Role?     @relation(fields: [roleId], references: [id])
+    brands       Brand[]
+    orders       Order[]
+
+    @@map("users")
+}
+
 model Category {
     id         String    @id @default(cuid())
     name       String
@@ -71,13 +74,14 @@ model Category {
 
 model Brand {
     id         String     @id @default(cuid())
-    name       String
+    name       String     @unique
     image_url  String
     categories Category[] @relation("CategoryBrands")
     created_at DateTime   @default(now())
     updated_at DateTime?
     User       User?      @relation(fields: [userId], references: [id])
     userId     String?
+    Order      Order[]
 
     @@map("brands")
 }
@@ -96,3 +100,45 @@ model File {
 
     @@map("files")
 }
+
+model Order {
+    id        String  @id @default(cuid())
+    authority String  @unique() // used for checking if the payment recived
+    has_payed Boolean @default(false)
+
+    recipients Recipient[] // phonenumbers
+    price      Int
+    message    String?
+
+    send_by_system Boolean   @default(false) // Indicates if the system should send the link
+    send_date      DateTime? // Date when the link should be sent
+
+    brand   Brand  @relation(fields: [brandId], references: [id])
+    brandId String
+
+    user   User?   @relation(fields: [userId], references: [id])
+    userId String?
+
+    created_at DateTime  @default(now())
+    updated_at DateTime?
+
+    @@map("orders")
+}
+
+model Recipient {
+    id      String  @id @default(cuid())
+    value   String // Store phone number or email
+    type    String // "PHONE" or "EMAIL" to distinguish the recipient type
+    order   Order?  @relation(fields: [orderId], references: [id])
+    orderId String?
+
+    created_at DateTime  @default(now())
+    updated_at DateTime?
+
+    @@map("recipients")
+}
+
+// enum RecipientType {
+//     PHONE
+//     EMAIL
+// }

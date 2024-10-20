@@ -6,8 +6,8 @@ import H2 from "~/ui/heading/h2";
 
 export default async function BrandsPage({ params, searchParams }) {
   const filters = getArray(searchParams?.filters);
-  void api.category.getAll.prefetch();
-  void api.brand.getAll.prefetch({ categoryNames: filters });
+  const categories = await api.category.getAll();
+  const brands = await api.brand.getAll({ categoryNames: filters });
 
   // const brands = categories
   //   .map((a) => a.brands)
@@ -22,7 +22,7 @@ export default async function BrandsPage({ params, searchParams }) {
       >
         <H2 className="text-4xl text-accent">برند ها</H2>
 
-        <BrandsWithFilterView />
+        <BrandsWithFilterView categories={categories} brands={brands} />
       </Container>
     </>
   );

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getRandomInt } from "~/lib/user.util";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -6,9 +7,11 @@ import {
 } from "~/server/api/trpc";
 import {
   createUserSchema,
+  phonenumberSchema,
   updateUserPassword,
   updateUserSchema,
   userIdSchema,
+  userLoginSchema,
 } from "~/server/validations/user.validation";
 import { hashPassword } from "~/utils/util";
 
@@ -112,5 +115,43 @@ export const userRouter = createTRPCRouter({
           id: input.id,
         },
       });
+    }),
+  generateCode: publicProcedure
+    .input(phonenumberSchema)
+    .mutation(async ({ input, ctx }) => {
+      const code: string = getRandomInt().toString();
+      try {
+        return await ctx.db.user.upsert({
+          where: {
+            phonenumber: input.phonenumber,
+          },
+          create: {
+            code,
+            phonenumber: input.phonenumber,
+            password: code,
+          },
+          update: {
+            code,
+          },
+        });
+      } catch {
+        throw new Error("sever error");
+      }
+    }),
+  validateCode: publicProcedure
+    .input(userLoginSchema)
+    .mutation(async ({ input, ctx }) => {
+      const code: string = getRandomInt().toString();
+      try {
+        const user = await ctx.db.user.findUnique({
+          where: {
+            phonenumber: input.phonenumber,
+            code: input.code,
+          },
+        });
+        if (user) return user;
+      } catch {
+        throw new Error("sever error");
+      }
     }),
 });

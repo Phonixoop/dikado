@@ -48,19 +48,16 @@ export const authOptions: NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
+        phonenumber: { label: "phonenumber", type: "text" },
+        verificationCode: { label: "verificationCode", type: "text" },
       },
       //@ts-ignore
-      async authorize(
-        credentials: Record<"username" | "password" | "session", string>,
-        req,
-      ) {
+      async authorize(credentials: { phonenumber; verificationCode; session }) {
         // Add logic here to look up the user from the credentials supplied
 
         const user = await db.user.findFirst({
           where: {
-            username: credentials.username,
+            phonenumber: credentials.phonenumber,
           },
           include: {
             role: true,
@@ -91,11 +88,14 @@ export const authOptions: NextAuthOptions = {
           //   } else return;
           // }
         } else if (user) {
-          if (
-            compareHashPassword(credentials.password, user.password).success
-          ) {
+          if (user?.code === credentials.verificationCode) {
             return user;
           }
+          // if (
+          //   compareHashPassword(credentials.password, user.password).success
+          // ) {
+          //   return user;
+          // }
           return undefined;
         } else {
           // uncomment to create a user for the first time
@@ -116,7 +116,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session: async ({ session, token }: { session: any; token: any }) => {
       const user = await db.user.findUnique({
-        where: { username: token.user.username },
+        where: { phonenumber: token.user.phonenumber },
         include: { role: true, brands: true },
       });
       session.user = user;
@@ -124,8 +124,7 @@ export const authOptions: NextAuthOptions = {
     },
     jwt: async ({ token, user }: any) => {
       user && (token.user = user);
-
-      delete token.user.password;
+      delete token.user.code;
       return token;
     },
   },

@@ -2,6 +2,7 @@
 
 import { Brand, Category } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { Suspense } from "react";
 import { cn } from "~/lib/utils";
@@ -13,16 +14,24 @@ type CategoryWithBrandType = Awaited<
   ReturnType<typeof apiServer.category.getAll>
 >;
 
-export default function BrandsWithFilterView() {
+export default function BrandsWithFilterView({ categories, brands }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const selectedFilters = params.getAll("filters") ?? [];
 
-  const categories = api.category.getAll.useQuery();
+  // const categories = api.category.getAll.useQuery();
 
-  const brands = api.brand.getAll.useQuery({
-    categoryNames: selectedFilters,
-  });
+  const getBrands = api.brand.getAll.useQuery(
+    {
+      categoryNames: selectedFilters,
+    },
+    {
+      initialData: brands,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     const newFilters = new Set(selectedFilters);
@@ -48,39 +57,37 @@ export default function BrandsWithFilterView() {
       <div className="flex w-[25%] flex-col items-center justify-center gap-4 rounded-xl bg-secondary py-5">
         <h3 className="text-2xl">دسته بندی</h3>
         <div className="flex w-full flex-col items-center justify-center divide-y divide-accent rounded-xl bg-secondary">
-          {" "}
-          {!categories.isPending &&
-            categories.data.map((category) => {
-              const isChecked = selectedFilters.includes(category.name);
-              return (
-                <div
-                  key={category.id}
-                  className={cn("flex w-full items-center justify-center")}
-                >
-                  <Checkbox
-                    className={cn(
-                      "min-w-40 rounded-sm p-2",
-                      isChecked ? "bg-accent/10" : "",
-                    )}
-                    id={category.id}
-                    checked={isChecked}
-                    label={category.name}
-                    onChange={(checked) =>
-                      handleCheckboxChange(category.name, checked)
-                    }
-                  />
-                </div>
-              );
-            })}
+          {categories.map((category) => {
+            const isChecked = selectedFilters.includes(category.name);
+            return (
+              <div
+                key={category.id}
+                className={cn("flex w-full items-center justify-center")}
+              >
+                <Checkbox
+                  className={cn(
+                    "min-w-40 rounded-sm p-2",
+                    isChecked ? "bg-accent/10" : "",
+                  )}
+                  id={category.id}
+                  checked={isChecked}
+                  label={category.name}
+                  onChange={(checked) =>
+                    handleCheckboxChange(category.name, checked)
+                  }
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
       <div className="flex w-full flex-wrap gap-3 bg-secondary">
-        {brands?.data?.map((brand) => {
+        {getBrands?.data?.map((brand) => {
           const sanitizedImageUrl = brand.image_url.startsWith("./")
             ? brand.image_url.substring(1)
             : brand.image_url;
           return (
-            <div key={brand.name}>
+            <Link href={`/brands/${brand.name}`} key={brand.name}>
               <Image
                 src={sanitizedImageUrl}
                 height={100}
@@ -89,7 +96,7 @@ export default function BrandsWithFilterView() {
                 objectFit="cover"
               />
               <h3>{brand.name}</h3>
-            </div>
+            </Link>
           );
         })}
       </div>
