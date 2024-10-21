@@ -50,7 +50,8 @@ export default function Button({
       type={type}
       onClick={onClick}
       className={twMerge(
-        "duration-400 relative flex  select-none items-center justify-center rounded-lg p-2  text-primary ",
+        "duration-400 relative flex select-none items-center justify-center rounded-lg p-2 text-primary",
+        "disabled:border-none disabled:bg-primary disabled:text-secondary/60",
         className,
         !disabled ? enabledClass : busyClass,
         isLoading ? "bg-opacity-10" : "",
@@ -60,7 +61,7 @@ export default function Button({
       {children}
       <div
         dir="rtl"
-        className="absolute top-7 flex  h-fit w-fit items-center justify-start"
+        className="absolute top-7 flex h-fit w-fit items-center justify-start"
       >
         {isLoading && <ThreeDotsWave />}
       </div>

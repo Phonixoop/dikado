@@ -60,7 +60,7 @@ export default async function SingleBrandPage(props: Props) {
   });
 
   return (
-    <Container>
+    <Container className="md:w-full">
       <BrandView brand={brand} />
     </Container>
   );

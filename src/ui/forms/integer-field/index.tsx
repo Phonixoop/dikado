@@ -1,5 +1,5 @@
 import TextField from "../text-field";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export default function IntegerField({
   value,
@@ -11,11 +11,11 @@ export default function IntegerField({
 
   function handleChange(e) {
     const val = e.target.value;
-    const parsedValue = val.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+    const parsedValue = val.replace(/\D/g, "").replace(/^0+/, "");
 
     setInternalValue(parsedValue);
-    onChange(e); // Pass the event upwards if needed
-    onValueChange(parsedValue); // Notify parent with numeric value
+    onChange(e);
+    onValueChange(parsedValue);
   }
 
   return (

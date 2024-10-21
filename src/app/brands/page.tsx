@@ -16,14 +16,14 @@ export default async function BrandsPage({ params, searchParams }) {
 
   return (
     <>
-      <Container
-        rtl
-        className="mx-auto flex flex-col gap-10 rounded-lg border border-accent bg-accent/10 p-10"
+      <div
+        dir="rtl"
+        className="mx-auto flex w-full flex-col gap-10 rounded-lg border border-accent bg-accent/10 p-10"
       >
         <H2 className="text-4xl text-accent">برند ها</H2>
 
         <BrandsWithFilterView categories={categories} brands={brands} />
-      </Container>
+      </div>
     </>
   );
 }

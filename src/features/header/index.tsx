@@ -23,7 +23,7 @@ export default async function Header() {
     <>
       <header
         dir="rtl"
-        className="sticky top-0 z-50 flex w-full flex-col items-center justify-between border-b border-primary/20 bg-secondary/50 py-5 backdrop-blur-lg sm:p-0"
+        className="sticky top-0 z-50 flex w-full flex-col items-center justify-between py-5 backdrop-blur-lg sm:p-0"
       >
         <div className="flex w-full flex-row items-center justify-between gap-4 py-2 lg:w-11/12">
           <div className="flex w-full flex-row items-center justify-start gap-4 px-2 sm:w-max sm:px-0">
@@ -36,9 +36,9 @@ export default async function Header() {
                         <Link
                           key={i}
                           className={cn(
-                            "rounded-lg bg-secbuttn p-2 text-primary",
+                            "rounded-lg bg-secbuttn p-2 text-red-700",
                             item.link === pathMame
-                              ? "bg-accent/20 text-accent"
+                              ? "bg-accent/20 text-primary"
                               : "",
                           )}
                           href={item.link}
@@ -81,7 +81,7 @@ function SubMenu({ item, pathname }: { item: TMenu; pathname: string }) {
             <Link
               className={cn(
                 "w-fit self-start rounded-lg bg-secbuttn p-2 text-primary",
-                subItem.link === pathname ? "bg-accent/20 text-accent" : "",
+                subItem.link === pathname ? "bg-accent/20 text-primary" : "",
               )}
               href={subItem.link}
             >

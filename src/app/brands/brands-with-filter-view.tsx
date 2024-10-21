@@ -81,13 +81,17 @@ export default function BrandsWithFilterView({ categories, brands }) {
           })}
         </div>
       </div>
-      <div className="flex w-full flex-wrap gap-3 bg-secondary">
+      <div className="flex w-full flex-wrap items-stretch gap-3">
         {getBrands?.data?.map((brand) => {
           const sanitizedImageUrl = brand.image_url.startsWith("./")
             ? brand.image_url.substring(1)
             : brand.image_url;
           return (
-            <Link href={`/brands/${brand.name}`} key={brand.name}>
+            <Link
+              className="flex flex-col items-center justify-center gap-5 rounded-xl bg-accent/10 p-5"
+              href={`/brands/${brand.name}`}
+              key={brand.name}
+            >
               <Image
                 src={sanitizedImageUrl}
                 height={100}

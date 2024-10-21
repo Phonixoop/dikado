@@ -1,3 +1,4 @@
+import DigitalGiftHero from "~/app/animatesvg";
 import { getServerAuthSession } from "~/server/auth";
 
 export default async function Home() {
@@ -8,8 +9,10 @@ export default async function Home() {
 
   return (
     <>
-      <div>
-        <div className=""></div>
+      <div className="">
+        <div className="">
+          <DigitalGiftHero />
+        </div>
       </div>
     </>
   );

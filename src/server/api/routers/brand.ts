@@ -122,7 +122,7 @@ export const brandRouter = createTRPCRouter({
         },
       });
     }),
-  getBrandByName: protectedProcedure
+  getBrandByName: publicProcedure
     .input(brandNameSchema)
     .query(async ({ input, ctx }) => {
       return await ctx.db.brand.findUnique({

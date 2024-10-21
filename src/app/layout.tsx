@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} h-full`}>
+    <html lang="fa" className={`${GeistSans.variable} h-full`}>
       <body className="theme-dark-1 scrollbar-track-[var(--accent)] h-full">
         <div id="overlay"></div>
         <div

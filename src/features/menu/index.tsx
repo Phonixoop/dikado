@@ -99,9 +99,9 @@ function MenuItem({
       <div
         className={twMerge(
           "relative z-0 flex items-center justify-center gap-2 rounded-sm px-3 py-2 text-sm",
-          isActive ? "text-accent hover:text-secondary" : "text-accent",
-          isHovered ? "text-accent" : "",
-          isSub ? "bg-secondary text-primary hover:text-accent" : "",
+          isActive ? "text-primbuttn hover:text-secondary" : "text-primbuttn",
+          isHovered ? "text-primbuttn" : "",
+          isSub ? "bg-secondary text-primary hover:text-primbuttn" : "",
           theme === "solid" ? "rounded-md" : "rounded-full",
         )}
       >
@@ -112,7 +112,7 @@ function MenuItem({
             }}
             layoutId="bg-follower"
             className={twMerge(
-              "absolute inset-0 -z-10 bg-primary text-accent opacity-0 transition-opacity duration-1000 group-hover:opacity-100",
+              "absolute inset-0 -z-10 bg-primary text-primbuttn opacity-0 transition-opacity duration-1000 group-hover:opacity-100",
               theme === "solid" ? "rounded-md" : "rounded-full",
             )}
           />
@@ -121,7 +121,7 @@ function MenuItem({
         {isActive && (
           <motion.div
             layoutId="underline"
-            className="absolute -bottom-[5px] left-0 -z-10 h-[3px] w-full rounded-full bg-primary text-accent"
+            className="absolute -bottom-[5px] left-0 -z-10 h-[3px] w-full rounded-full bg-primary text-primbuttn"
           />
         )}
 
@@ -271,7 +271,7 @@ export function InPageMenu({
               />
             </Button>
           </div>
-          <span className="text-accent">{items[activeIndex]?.name}</span>
+          <span className="text-primbuttn">{items[activeIndex]?.name}</span>
         </div>
       )}
     </>
@@ -332,5 +332,5 @@ function InPageMenuItem({ text, isHovered = false, isActive = false }) {
             <ChevronLeft className="h-5 w-5 stroke-primary group-hover:stroke-accent " />
           </Button>
         </div>
-        <span className="text-accent">{calendar[16].format("MMMM")}</span>
+        <span className="text-primbuttn">{calendar[16].format("MMMM")}</span>
       </div>*/

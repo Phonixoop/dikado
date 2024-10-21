@@ -61,7 +61,7 @@
   --secondary: 245, 240, 255;
   --primbuttn: 255, 140, 50;
   --secbuttn: 200, 180, 255;
-  --accent: 130, 80, 200;
+  --accent: 49, 46, 129;
 }
 
 .theme {
@@ -93,11 +93,13 @@
 .theme-dark-1 {
   --primary: 244, 246, 245;
   --secondary: 4, 6, 5;
-  --primbuttn: 75, 113, 100;
+  --primbuttn: 255, 255, 255;
 
   --secbuttn: 16, 18, 20;
 
-  --accent: 226, 112, 33;
+  /* --accent: 226, 112, 33; */
+
+  --accent: 113, 96, 232;
 }
 /* .theme-dark-1 {
   --primary: 245, 240, 255;
@@ -261,13 +263,13 @@ input[type="number"] {
 }
 
 body {
-  @apply bg-secondary;
+  @apply bg-gradient-to-br from-black to-indigo-600;
   @apply h-max;
 }
 
 *::selection {
-  background: rgb(var(--accent));
-  color: rgb(var(--secondary));
+  background: rgb(var(--accent), 0.2);
+  color: rgb(var(--accent));
 }
 /* * {
   scrollbar-width: auto;
@@ -305,7 +307,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(var(--primbuttn));
+  background-color: rgb(var(--accent));
   border-radius: 10px;
   border: 3px solid transparent;
   transition: opacity 0.5s 0.5s ease-out;

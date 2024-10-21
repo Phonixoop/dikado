@@ -8,7 +8,7 @@ export type TMenu = {
 export const MENU = [
   {
     value: "خانه",
-    link: "",
+    link: "/",
   },
   {
     value: "آموزش",
