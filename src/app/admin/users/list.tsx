@@ -90,7 +90,18 @@ export default function UsersList({ session }: { session: Session }) {
             );
           },
         },
-
+        {
+          header: "شماره تلفن",
+          accessorKey: "phonenumber",
+          cell: ({ row }) => {
+            const user: User = row.original;
+            return (
+              <div className="text-atysa-900 w-full cursor-pointer rounded-full px-2 py-2">
+                {user.phonenumber}
+              </div>
+            );
+          },
+        },
         {
           header: "سمت",
           accessorKey: "role",
@@ -163,6 +174,7 @@ export default function UsersList({ session }: { session: Session }) {
         clickedRowIndex={selectedRowUser?.id}
         onClick={(row) => {
           const user = row.original;
+
           setSelectedRowUser(user);
         }}
       />
@@ -187,16 +199,14 @@ function UsersSkeleton() {
     <>
       {[...Array(11).keys()].map((i) => {
         return (
-          <>
-            <span
-              key={i}
-              className="inline-block h-12 w-full animate-pulse rounded-xl bg-accent opacity-30"
-              style={{
-                animationDelay: `${i * 5}`,
-                animationDuration: "1s",
-              }}
-            />
-          </>
+          <span
+            key={i}
+            className="inline-block h-12 w-full animate-pulse rounded-xl bg-accent opacity-30"
+            style={{
+              animationDelay: `${i * 5}`,
+              animationDuration: "1s",
+            }}
+          />
         );
       })}
     </>

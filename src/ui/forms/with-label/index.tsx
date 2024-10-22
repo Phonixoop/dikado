@@ -32,8 +32,10 @@ function withLabel<T>(Component: FC<T>) {
         <Component
           value={value}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e);
-            onValueChange(e.target.value);
+            onChange(e); // Ensure this passes the event to PhoneField
+          }}
+          onValueChange={(parsedValue) => {
+            onValueChange(parsedValue); // Ensure this handles numeric value change
           }}
           focused={focused}
           onBlur={() => setFocused(false)}

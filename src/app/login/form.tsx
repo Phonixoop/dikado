@@ -65,16 +65,20 @@ export default function CreateAccountForm() {
     formik,
   } = useMultiStep<typeof initialValues>();
 
+  const [code, setCode] = useState();
   useEffect(() => {
     if (currentStepName === "welcome" && !formik.isValid) previousStep();
     if (currentStepName === "welcome" && !isValid) previousStep();
-    if (currentStepName === "welcome" && formik.isValid && isValid)
-      router.push("/");
+    if (currentStepName === "welcome" && formik.isValid && isValid) {
+      delay(1000).then(() => {
+        signIn();
+      });
+    }
 
     if (currentStepName === "wait_sendcode") {
       sendCode({ sendCodeMutate, phonenumber: formik.values.phonenumber })
         .then(([value, error]) => {
-          console.log(value);
+          setCode(value.code);
           if (!error) nextStep();
           else previousStep();
         })
@@ -87,7 +91,6 @@ export default function CreateAccountForm() {
         code: formik.values.code,
       })
         .then(([value, error]) => {
-          console.log({ value, error });
           if (!error) {
             setIsValid(true);
             goToStep("welcome");
@@ -104,34 +107,6 @@ export default function CreateAccountForm() {
       toast.success(value.code);
     },
   });
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [step, setStep] = useState(0);
-
-  async function goTo(stepNumber: number) {
-    if (formik.isValid && stepNumber >= 1) {
-      setStep(2);
-      setIsLoading(true);
-      await delay(1000);
-
-      await signIn("credentials", {
-        phonenumber: formik.values.phonenumber,
-        verificationCode: formik.values.code,
-        callbackUrl: `${window.location.origin}/`,
-        redirect: false,
-      })
-        .then(async (result: any) => {
-          if (result.ok) {
-            setStep(4);
-            await delay(1000);
-            router.refresh();
-          } else setStep(3);
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
-    } else if (stepNumber < 2) setStep(stepNumber);
-  }
 
   // Set the beforeStepChange function
 
@@ -140,8 +115,13 @@ export default function CreateAccountForm() {
       <div className="flex flex-col items-center justify-center">
         <FormInputIcon className="animate-pulse stroke-primary" />
         <h2 className="w-full text-center text-accent">ورود</h2>
+        {code}
       </div>
-      <MultiStep loadingSteps={[1, 3]} isLoading={isLoading} icons={icons}>
+      <MultiStep
+        loadingSteps={[1, 3]}
+        isLoading={sendCodeMutate.isPending}
+        icons={icons}
+      >
         <PhonenumberForm />
         <ViewSendingCode />
         <ValidationCodeForm />

@@ -25,6 +25,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.user.create({
         data: {
+          phonenumber: input.phonenumber,
           username: input.username,
           display_name: input?.display_name,
           password: hashPassword(input.password),
@@ -43,6 +44,7 @@ export const userRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
+          phonenumber: input.phonenumber,
           username: input.username,
           roleId: input.roleId,
           display_name: input.display_name,

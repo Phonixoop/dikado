@@ -96,7 +96,7 @@ export default function CategoryForm() {
             onClick={() => {
               setSelectedRowCategory(undefined);
             }}
-            className="absolute -top-10 border border-accent/10 bg-secondary text-primbuttn hover:bg-accent hover:text-secbuttn"
+            className="absolute -top-10 border border-accent/10 bg-primary text-secondary transition-all hover:bg-accent/20 hover:text-accent"
           >
             ساخت دسته بندی جدید +
           </Button>
@@ -136,8 +136,8 @@ export default function CategoryForm() {
           </div>
           <Button
             type="submit"
-            isLoading={createCategory.isPending}
-            className="w-full bg-accent/10 text-accent"
+            isLoading={createCategory.isPending || updateCategory.isPending}
+            className="w-full bg-accent/10 text-primary"
           >
             {selectedRowCategory ? "ویرایش" : "ثبت"}
           </Button>

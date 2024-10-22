@@ -26,13 +26,13 @@ export default function ValidationCodeForm() {
         className="relative flex w-full flex-col items-center justify-center gap-5"
       >
         <IntegerWithLabel
-          maxLength={4}
           focused
           label={"کد تایید"}
           value={formik.getFieldProps("code").value}
           onChange={(e: any) => {
             formik.setFieldValue("code", e.target.value);
           }}
+          maxLength={4}
         />
 
         <InputError message={formik.dirty && formik.errors.code} />

@@ -17,9 +17,7 @@ export default function SubContaier() {
       <Container className="flex flex-col gap-5 px-5 py-10">
         <h1 className="text-primary">{currentMenuItem?.value}</h1>
         {currentMenuItem?.description && (
-          <p className="text-sm text-primbuttn">
-            {currentMenuItem?.description}
-          </p>
+          <p className="text-sm text-accent">{currentMenuItem?.description}</p>
         )}
       </Container>
     </ContainerBottomBorder>

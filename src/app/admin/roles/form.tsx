@@ -93,18 +93,24 @@ export function RoleForm({
 
   return (
     <form
-      className="relative flex  w-full flex-col overflow-hidden pb-10"
+      className={cn(
+        "relative flex w-full flex-col pb-10",
+        !selectedRole ? "overflow-hidden" : "",
+      )}
       onSubmit={formik.handleSubmit}
     >
       {/* <pre>{JSON.stringify(formik.values)}</pre> */}
       <div
-        className=" flex w-full flex-col items-center justify-start gap-5 overflow-y-auto py-5"
+        className={cn(
+          "relative flex w-full flex-col items-center justify-start gap-5 py-5",
+          !selectedRole ? "overflow-y-auto" : "",
+        )}
         dir="ltr"
       >
         {selectedRole && (
           <>
             <Button
-              className="border border-accent "
+              className="absolute -top-10 border border-accent/10 bg-primary text-secondary transition-all hover:bg-accent/20 hover:text-accent"
               isLoading={deleteRole.isPending}
               onClick={() => onClear()}
             >
@@ -114,7 +120,7 @@ export function RoleForm({
         )}
         <div
           className={cn(
-            "flex w-full  items-center",
+            "flex w-full items-center",
             selectedRole ? "justify-between" : "justify-end",
           )}
         >
@@ -131,17 +137,17 @@ export function RoleForm({
                   })
                   .catch(() => {
                     toast({
-                      title: "خطای پاک کردن سمت",
+                      title: "خطای حذف سمت",
                       description: deleteRole.error.message,
                     });
                   });
               }}
             >
               <Trash2Icon className="h-5 w-5" />
-              <span>پاک کردن</span>
+              <span>حذف سمت</span>
             </ButtonConfirm>
           )}
-          <div className="flex flex-col items-end justify-center ">
+          <div className="flex flex-col items-end justify-center">
             <TextWithLabel
               label="نام سمت"
               name="name"
@@ -165,7 +171,7 @@ export function RoleForm({
       <Button
         isLoading={createRole.isPending || updateRole.isPending}
         className={cn(
-          "absolute bottom-0 left-0 w-full  bg-accent/20 text-accent",
+          "absolute bottom-0 left-0 w-full bg-accent/20 text-primary",
         )}
         initialTranslateY={hasFormChanged ? -2 : 96}
         translateY={hasFormChanged ? -2 : 96}

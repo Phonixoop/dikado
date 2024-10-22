@@ -1,5 +1,5 @@
+import { ChangeEvent } from "react";
 import TextField from "../text-field";
-import { useCallback, useState } from "react";
 
 export default function IntegerField({
   value,
@@ -7,25 +7,22 @@ export default function IntegerField({
   onValueChange = (e) => {},
   ...rest
 }) {
-  const [internalValue, setInternalValue] = useState(value);
-
-  function handleChange(e) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
     const parsedValue = val.replace(/\D/g, "").replace(/^0+/, "");
 
-    setInternalValue(parsedValue);
-    onChange(e);
-    onValueChange(parsedValue);
+    onChange(e); // Pass the event to the formik handler
+    onValueChange(parsedValue); // Pass the processed value
   }
 
   return (
     <TextField
-      value={internalValue}
+      value={value} // Use Formik-controlled value
       isRtl={false}
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"
-      onChange={handleChange}
+      onChange={handleChange} // Call handleChange
       {...rest}
     />
   );

@@ -4,7 +4,8 @@ export const createUserSchema = z.object({
   username: z
     .string()
     .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد")
-    .optional(),
+
+    .nullish(),
   password: z
     .string({ required_error: "این فیلد اجباری است" })
     .min(6, "پسورد نمیتواند کمتر از 6 کاراکتر باشد."),
@@ -22,7 +23,7 @@ export const updateUserSchema = z.object({
   username: z
     .string()
     .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد")
-    .optional(),
+    .nullish(),
   phonenumber: z
     .string({ required_error: "این فیلد اجباری است" })
     .startsWith("09", "باید با 09 شروع شود")

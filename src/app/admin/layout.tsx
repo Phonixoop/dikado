@@ -56,13 +56,13 @@ export default async function AdminLayout({
           </div>
         </Container>
       </Container>
-      <ContainerBottomBorder className="sticky top-0 z-50 flex pt-2 backdrop-blur-lg">
+      <ContainerBottomBorder className="sticky top-16 z-50 flex border-t border-primary/30 backdrop-blur-lg">
         <Container className="max2xl:w-full">
           <Menu rootPath={"/admin/"} list={ADMIN_MENU_LIST} />
         </Container>
       </ContainerBottomBorder>
       <SubContaier />
-      <ContainerBottomBorder className="h-full items-start bg-accent/5">
+      <ContainerBottomBorder className="h-full items-start bg-accent/10">
         {children}
       </ContainerBottomBorder>
     </div>

@@ -31,7 +31,12 @@ import withModalState from "~/ui/modals/with-modal-state";
 import { SquareAsteriskIcon } from "lucide-react";
 import { api } from "~/trpc/react";
 import { SelectControlled } from "~/features/select-control";
+import PhoneField from "~/ui/forms/phone-field";
+import IntegerField from "~/ui/forms/integer-field";
+
 const TextFieldWithLable = withLabel(TextField);
+
+const PhoneWithLabel = withLabel(PhoneField);
 // const TextAreaWithLable = withLabel(TextAreaField);
 
 function ButtonForChangePasswordModal({ children, ...rest }) {
@@ -49,19 +54,11 @@ function ButtonForChangePasswordModal({ children, ...rest }) {
 }
 const PasswordFieldWithModal = withModalState(ButtonForChangePasswordModal);
 
-export function UserForm({
-  sessionUser,
-}: {
-  sessionUser?: User | undefined;
-
-  onCreateSuccess?: (user: User) => any;
-  onClearUser?: () => any;
-}) {
+export function UserForm() {
   const getRole = api.role.getAll.useQuery();
   const getBrands = api.brand.getAll.useQuery({});
   const { selectedRowUser, setSelectedRowUser } = useUser();
   const utils = api.useUtils();
-  const user = sessionUser ?? selectedRowUser ?? undefined;
 
   const createUser = api.user.createUser.useMutation({
     onSettled() {
@@ -86,11 +83,12 @@ export function UserForm({
 
   const formik = useFormik({
     initialValues: {
-      username: selectedRowUser?.username ?? "",
+      username: selectedRowUser?.username,
+      phonenumber: selectedRowUser?.phonenumber,
       // i know its bad to return password from server even hashed password
-      password: selectedRowUser?.password ?? "",
-      display_name: selectedRowUser?.display_name ?? "",
-      roleId: selectedRowUser?.roleId ?? "",
+      password: selectedRowUser?.password,
+      display_name: selectedRowUser?.display_name,
+      roleId: selectedRowUser?.roleId,
       brandIds: selectedRowUser?.brands.map((a) => a.id) ?? [],
     },
 
@@ -99,19 +97,21 @@ export function UserForm({
     ),
     validateOnBlur: true,
     onSubmit: (values: typeof createUserSchema._type) => {
-      if (!user)
+      if (!selectedRowUser)
         return createUser.mutate({
-          username: values?.username ?? "",
-          password: values?.password ?? "",
-          display_name: values?.display_name ?? "",
+          username: values?.username,
+          phonenumber: values?.phonenumber,
+          password: values?.password,
+          display_name: values?.display_name,
           roleId: values.roleId,
           brandIds: values?.brandIds ?? [],
         });
 
       return updateUser.mutate({
         id: selectedRowUser.id,
-        username: values?.username ?? "",
-        display_name: values?.display_name ?? "",
+        username: values?.username,
+        phonenumber: values?.phonenumber,
+        display_name: values?.display_name,
         roleId: values.roleId,
         brandIds: values?.brandIds ?? [],
       });
@@ -122,14 +122,15 @@ export function UserForm({
     formik.setValues((a) => {
       return {
         id: selectedRowUser?.id ?? "",
-        username: selectedRowUser?.username ?? "",
+        username: selectedRowUser?.username,
+        phonenumber: selectedRowUser?.phonenumber ?? "",
         password: "",
         display_name: selectedRowUser?.display_name ?? "",
         roleId: selectedRowUser?.roleId ?? "",
         brandIds: selectedRowUser?.brands.map((a) => a.id) ?? [],
       };
     });
-  }, [user]);
+  }, [selectedRowUser]);
 
   return (
     <>
@@ -140,18 +141,18 @@ export function UserForm({
         }}
         className="relative flex flex-col items-center justify-center gap-8"
       >
-        {user && !sessionUser && (
+        {selectedRowUser && (
           <Button
             onClick={() => {
               setSelectedRowUser(undefined);
             }}
-            className="absolute -top-10 border border-accent/10 bg-secondary text-primbuttn hover:bg-accent hover:text-secbuttn"
+            className="absolute -top-10 border border-accent/10 bg-primary text-secondary transition-all hover:bg-accent/20 hover:text-accent"
           >
             ساخت کاربر جدید +
           </Button>
         )}
         <h3 className="w-full pb-2 text-accent">
-          {user ? "ویرایش کاربر" : "ساخت کاربر"}
+          {selectedRowUser ? "ویرایش کاربر" : "ساخت کاربر"}
         </h3>
         <div className="flex w-full items-center justify-between gap-10 text-primary">
           <div className="w-full">
@@ -163,7 +164,7 @@ export function UserForm({
             />
             <InputError message={formik.errors.username} />
           </div>
-          {user ? (
+          {selectedRowUser ? (
             <PasswordFieldWithModal
               title="تغییر رمز عبور"
               size={"sm"}
@@ -175,7 +176,7 @@ export function UserForm({
                     dir="rtl"
                     onSubmit={() => {
                       return updateUserPassword.mutate({
-                        id: user.id,
+                        id: selectedRowUser.id,
                         password: formik.values.password,
                       });
                     }}
@@ -212,7 +213,19 @@ export function UserForm({
             />
           )}
         </div>
-
+        <div className="w-full">
+          <PhoneWithLabel
+            label={"شماره تلفن"}
+            name="phonenumber"
+            id="phonenumber"
+            value={formik.values.phonenumber}
+            onValueChange={(value) => {
+              formik.setFieldValue("phonenumber", value);
+            }}
+            maxLength={11}
+          />
+          <InputError message={formik.errors.phonenumber} />
+        </div>
         <div className="w-full">
           <TextFieldWithLable
             label={"نام نمایشی"}
@@ -272,11 +285,11 @@ export function UserForm({
         </div>
         <Button
           disabled={!formik.isValid}
-          isLoading={createUser.isPending ?? updateUser.isPending}
+          isLoading={createUser.isPending || updateUser.isPending}
           type="submit"
-          className="w-full rounded-xl bg-primbuttn text-secondary"
+          className="w-full rounded-xl bg-primbuttn text-primary"
         >
-          {user ? "ویرایش" : "ثبت"}
+          {selectedRowUser ? "ویرایش" : "ثبت"}
         </Button>
       </form>
     </>

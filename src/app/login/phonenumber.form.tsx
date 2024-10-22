@@ -26,10 +26,11 @@ export default function PhonenumberForm() {
       >
         <PhoneWithLabel
           label={"شماره موبایل"}
-          value={formik.getFieldProps("phonenumber").value}
-          onChange={(e: any) => {
-            formik.setFieldValue("phonenumber", e.target.value);
+          value={formik.values.phonenumber}
+          onValueChange={(value) => {
+            formik.setFieldValue("phonenumber", value);
           }}
+          maxLength={11}
         />
 
         <InputError message={formik.dirty && formik.errors.phonenumber} />
