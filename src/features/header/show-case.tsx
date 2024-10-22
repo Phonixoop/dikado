@@ -37,7 +37,7 @@ export function AuthShowcase({ session }: { session: Session }) {
     return (
       <div className="flex w-full items-center justify-between gap-5 px-4">
         <Button
-          className="flex  items-center justify-center gap-2 rounded-lg border border-accent bg-primary stroke-accent p-0 px-2 py-1  text-secondary"
+          className="flex items-center justify-center gap-2 rounded-lg border border-accent bg-primary stroke-accent p-0 px-2 py-1 text-secondary"
           onClick={session ? () => void signOut() : () => void signIn()}
         >
           <span>ورود</span>
@@ -58,15 +58,15 @@ export function AuthShowcase({ session }: { session: Session }) {
   const isAdmin = permission && permission?.isActive === true;
 
   return (
-    <div className="flex  flex-row gap-4 rounded-full ">
-      <div className="flex items-center gap-5  px-2 ">
+    <div className="flex flex-row gap-4 rounded-full">
+      <div className="flex items-center gap-5 px-2">
         <ThemeProvider>
           <ThemeSwitch />
         </ThemeProvider>
       </div>
-      <div className="relative flex  items-center justify-center gap-2 rounded-full  ">
+      <div className="relative flex items-center justify-center gap-2 rounded-full">
         <Button
-          className="flex  items-center justify-center gap-2 rounded-xl border border-primary/20  stroke-accent p-2 text-primary sm:px-4 sm:py-1"
+          className="flex items-center justify-center gap-2 rounded-xl border border-primary/20 stroke-accent p-2 text-primary sm:px-4 sm:py-1"
           onClick={session ? () => void signOut() : () => void signIn()}
         >
           <span className="hidden sm:flex">{session ? "خروج" : "ورود"}</span>
@@ -81,7 +81,7 @@ export function AuthShowcase({ session }: { session: Session }) {
           <>
             <div className="hidden h-[15px] w-[0.5px] bg-accent sm:flex"></div>
             <Link href={"/admin"}>
-              <Button className="flex min-w-max items-stretch justify-center gap-2 rounded-xl bg-secondary  stroke-accent  text-accent">
+              <Button className="flex min-w-max items-stretch justify-center gap-2 rounded-xl bg-primary stroke-accent text-accent">
                 <div className="flex w-fit items-center justify-center gap-2">
                   <span>پنل ادمین</span>
                   <UserCog2Icon />
@@ -96,11 +96,11 @@ export function AuthShowcase({ session }: { session: Session }) {
 }
 
 function ThemeSwitch() {
-  const canUseDOM: boolean = !!(
-    typeof window !== "undefined" &&
-    typeof window.document !== "undefined" &&
-    typeof window.document.createElement !== "undefined"
-  );
+  // const canUseDOM: boolean = !!(
+  //   typeof window !== "undefined" &&
+  //   typeof window.document !== "undefined" &&
+  //   typeof window.document.createElement !== "undefined"
+  // );
   const [value, setValue] = useState(true);
 
   const { theme, setTheme } = useTheme();

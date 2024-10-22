@@ -56,12 +56,26 @@
   --secbuttn: 197, 188, 171;
   --accent: 85, 119, 97;
 } */
-.theme-light-4 {
+/* .theme-light-4 {
   --primary: 25, 10, 35;
   --secondary: 245, 240, 255;
   --primbuttn: 255, 140, 50;
   --secbuttn: 200, 180, 255;
   --accent: 49, 46, 129;
+} */
+.theme-light-4 {
+  --primary: 31, 41, 55;
+  --secondary: 255, 255, 255;
+  --primbuttn: 124, 58, 237;
+  --secbuttn: 229, 231, 235;
+  --accent: 139, 92, 246;
+}
+.theme-dark-1 {
+  --primary: 243, 244, 246;
+  --secondary: 17, 24, 39;
+  --primbuttn: 76, 29, 149;
+  --secbuttn: 31, 41, 55;
+  --accent: 139, 92, 246;
 }
 
 .theme {
@@ -90,17 +104,17 @@
   --accent: 85, 119, 97;
 }
 
-.theme-dark-1 {
+/* .theme-dark-1 {
   --primary: 244, 246, 245;
   --secondary: 4, 6, 5;
   --primbuttn: 255, 255, 255;
 
   --secbuttn: 16, 18, 20;
 
-  /* --accent: 226, 112, 33; */
+
 
   --accent: 113, 96, 232;
-}
+} */
 /* .theme-dark-1 {
   --primary: 245, 240, 255;
   --secondary: 25, 10, 35;
@@ -263,7 +277,7 @@ input[type="number"] {
 }
 
 body {
-  @apply bg-gradient-to-br from-black to-indigo-600;
+  @apply bg-secondary;
   @apply h-max;
 }
 

@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "~/components/ui/button";
+import { Button as ShadButton } from "~/components/ui/button";
 import { Gift, Sparkles, Zap, Heart } from "lucide-react";
+import Link from "next/link";
+import LinkButton from "~/ui/buttons/link-button";
+import Button from "~/ui/buttons";
 
 export default function DigitalGiftHero() {
   const [isHovering, setIsHovering] = useState(false);
@@ -18,7 +21,7 @@ export default function DigitalGiftHero() {
             </h1>
             <p
               dir="rtl"
-              className="mx-auto max-w-[600px] text-justify text-lg text-indigo-100 sm:text-xl"
+              className="mx-auto max-w-[600px] text-justify text-lg text-primary sm:text-xl"
             >
               دیکادو یک راه‌حل نوآورانه برای هدیه دادن سریع و لحظه‌ای است که از
               طریق لینک ایجاد شده در پلتفرم و ارسال آن به دریافت‌کننده، تجربه‌ای
@@ -29,20 +32,15 @@ export default function DigitalGiftHero() {
               عزیزان خود تقدیم کنند.
             </p>
             <div className="flex w-full items-center justify-center gap-5 py-5">
-              <Button
-                size="lg"
-                className="bg-white text-indigo-600 hover:bg-indigo-100"
-              >
-                <Gift className="mr-2 h-5 w-5" />
+              <Button className="flex items-center justify-center gap-2 border border-white/0 bg-accent px-5 py-3 text-sm text-primary hover:bg-secondary">
+                <Gift className="h-5 w-5" />
                 کادو بفرست
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-transparent text-white hover:bg-white/20"
-              >
-                برند ها
-              </Button>
+              <Link className="flex w-auto" href={"/brands"} prefetch>
+                <Button className="w-auto border border-accent border-primary/80 bg-transparent px-10 py-2 text-primary hover:bg-white/20">
+                  برند ها
+                </Button>
+              </Link>
             </div>
           </div>
           <div

@@ -125,7 +125,7 @@ function MenuItem({
           />
         )}
 
-        <span className="group-hover:text-inherit/50 text-inherit duration-100">
+        <span className="text-primary duration-100 group-hover:text-secondary">
           {value}
         </span>
         {item.subMenu && (

@@ -9,10 +9,8 @@ export default async function Home() {
 
   return (
     <>
-      <div className="">
-        <div className="">
-          <DigitalGiftHero />
-        </div>
+      <div className="bg-secondary">
+        <DigitalGiftHero />
       </div>
     </>
   );

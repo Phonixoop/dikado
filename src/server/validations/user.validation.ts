@@ -2,12 +2,17 @@ import { z } from "zod";
 
 export const createUserSchema = z.object({
   username: z
-    .string({ required_error: "این فیلد اجباری است" })
-    .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد"),
+    .string()
+    .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد")
+    .optional(),
   password: z
     .string({ required_error: "این فیلد اجباری است" })
     .min(6, "پسورد نمیتواند کمتر از 6 کاراکتر باشد."),
   display_name: z.string().nullish().optional(),
+  phonenumber: z
+    .string({ required_error: "این فیلد اجباری است" })
+    .startsWith("09", "باید با 09 شروع شود")
+    .length(11, "باید 11 رقم باشد"),
   roleId: z.string({ required_error: "این فیلد اجباری است" }),
   brandIds: z.array(z.string()).optional(),
 });
@@ -15,8 +20,13 @@ export const createUserSchema = z.object({
 export const updateUserSchema = z.object({
   id: z.string(),
   username: z
+    .string()
+    .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد")
+    .optional(),
+  phonenumber: z
     .string({ required_error: "این فیلد اجباری است" })
-    .min(3, "نام کاربری نمی تواند کمتر از 3 کاراکتر باشد"),
+    .startsWith("09", "باید با 09 شروع شود")
+    .length(11, "باید 11 رقم باشد"),
   display_name: z.string().nullable().optional(),
   roleId: z.string({ required_error: "این فیلد اجباری است" }),
   brandIds: z.array(z.string()).optional(),
