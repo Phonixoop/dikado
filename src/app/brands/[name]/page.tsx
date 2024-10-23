@@ -4,6 +4,19 @@ import BrandView from "~/app/brands/[name]/brand";
 import { api } from "~/trpc/server";
 
 import { Container } from "~/ui/containers";
+import { MultiStepProvider } from "~/context/multiform.context";
+import { z } from "zod";
+import { createOrderSchema } from "~/server/validations/order.validation";
+import { generateDefaultObjectFromZod } from "~/lib/utils";
+
+const stepNames = [
+  "phonenumber",
+  "wait_sendcode",
+  "entercode",
+  "wait_validatecode",
+  "error",
+  "welcome",
+];
 
 type Props = {
   params: { name: string };
@@ -54,6 +67,7 @@ export async function generateMetadata(
   };
 }
 
+const initialValues = generateDefaultObjectFromZod(createOrderSchema);
 export default async function SingleBrandPage(props: Props) {
   const brand = await api.brand.getBrandByName({
     name: decodeURIComponent(props.params.name),
@@ -61,7 +75,9 @@ export default async function SingleBrandPage(props: Props) {
 
   return (
     <Container className="md:w-full">
-      <BrandView brand={brand} />
+      <MultiStepProvider stepNames={stepNames} initialValues={initialValues}>
+        <BrandView brand={brand} />
+      </MultiStepProvider>
     </Container>
   );
 }

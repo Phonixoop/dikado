@@ -3,10 +3,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import Button from "~/ui/buttons";
 import { useMultiStep } from "~/context/multiform.context";
+import { cn } from "~/lib/utils";
 
 // Define the props interface
 interface MultiStepProps {
   children: React.ReactNode;
+  className?: string;
   currentStep?: number;
   isLoading?: boolean;
   loadingSteps?: number[];
@@ -20,7 +22,7 @@ interface MultiStepProps {
 // Define the component with props typed
 const MultiStep: FC<MultiStepProps> = ({
   children,
-
+  className = "",
   isLoading = false,
   loadingSteps = [],
   onStepClick = (step: number) => {},
@@ -31,7 +33,12 @@ const MultiStep: FC<MultiStepProps> = ({
   const stepsArray = React.Children.toArray(children);
   const currentStepNode: React.ReactNode = stepsArray[currentStepIndex];
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-5">
+    <div
+      className={cn(
+        "flex w-full flex-col items-center justify-start gap-5",
+        className,
+      )}
+    >
       <div className="relative flex min-h-[150px] w-full items-center justify-center gap-2 overflow-hidden md:w-2/3">
         <div className="absolute z-0 h-[1px] w-11/12 bg-gradient-to-r from-transparent from-0% via-accent via-50% to-transparent to-100%">
           {loadingSteps.includes(currentStepIndex) && (
@@ -102,7 +109,7 @@ const MultiStep: FC<MultiStepProps> = ({
               if (currentStepIndex - 1 >= 0) previousStep();
             }}
           >
-            <ChevronLeft className="h-5 w-5 stroke-primbuttn group-hover:stroke-accent" />
+            <ChevronLeft className="h-5 w-5 stroke-accent group-hover:stroke-accent" />
           </Button>
           <Button
             disabled={isLoading}
@@ -116,7 +123,7 @@ const MultiStep: FC<MultiStepProps> = ({
               if (currentStepIndex + 1 <= icons.length - 1) nextStep();
             }}
           >
-            <ChevronRight className="h-5 w-5 stroke-primbuttn group-hover:stroke-accent" />
+            <ChevronRight className="h-5 w-5 stroke-accent group-hover:stroke-accent" />
           </Button>
         </div>
         <div className="relative flex h-full w-full items-center justify-center gap-10">

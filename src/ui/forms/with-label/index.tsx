@@ -6,6 +6,7 @@ import React, {
   ChangeEvent,
   ComponentPropsWithoutRef,
 } from "react";
+import { cn } from "~/lib/utils";
 
 interface WithLabelProps {
   children?: ReactNode;
@@ -46,7 +47,9 @@ function withLabel<T>(Component: FC<T>) {
 
         <label
           onClick={() => setFocused(true)}
-          className="absolute right-2.5 top-4 z-10 origin-top-right -translate-y-4 scale-75 transform select-none text-sm text-primary duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:text-accent"
+          className={cn(
+            "absolute right-2.5 top-4 z-10 origin-top-right -translate-y-2 scale-75 transform select-none text-sm text-primary duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-2 peer-focus:scale-75 peer-focus:text-accent",
+          )}
         >
           {label}
         </label>
@@ -58,3 +61,6 @@ function withLabel<T>(Component: FC<T>) {
 }
 
 export default withLabel;
+function isEmpty(value) {
+  return !Number.isInteger(value);
+}

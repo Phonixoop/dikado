@@ -168,6 +168,7 @@ export function sumColumnBasedOnRowValue(
 }
 
 export function commify(num) {
+  if (num.length <= 0) return "";
   var str = num.toString().split(".");
   if (str[0].length >= 4) {
     str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, "$1,");

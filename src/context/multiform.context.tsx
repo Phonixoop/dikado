@@ -67,7 +67,7 @@ export function MultiStepProvider<T extends object>({
 
   // Initialize formik dynamically with the given schema and initial values
   const formik = useFormik<T>({
-    initialValues,
+    initialValues: {} as T,
     validateOnMount: true,
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(userLoginSchema),

@@ -1,6 +1,7 @@
 import { ClassValue, clsx } from "clsx";
 import moment from "jalali-moment";
 import { twMerge } from "tailwind-merge";
+import { z } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -84,4 +85,22 @@ export function generateUUID() {
     },
   );
   return uuid;
+}
+
+export function generateDefaultObjectFromZod(schema: z.ZodTypeAny): any {
+  if (schema instanceof z.ZodObject) {
+    const shape = schema.shape;
+    return Object.keys(shape).reduce((acc, key) => {
+      acc[key] = generateDefaultObjectFromZod(shape[key]);
+      return acc;
+    }, {} as any);
+  } else if (schema instanceof z.ZodString) {
+    return "";
+  } else if (schema instanceof z.ZodNumber) {
+    return 0;
+  } else if (schema instanceof z.ZodBoolean) {
+    return false;
+  }
+  // Add other Zod types as needed
+  return null;
 }

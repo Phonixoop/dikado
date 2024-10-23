@@ -107,11 +107,13 @@ model Order {
     has_payed Boolean @default(false)
 
     recipients Recipient[] // phonenumbers
-    price      Int
-    message    String?
+    price      Decimal
+
+    messageId String?
+    message   Message? @relation(fields: [messageId], references: [id])
 
     send_by_system Boolean   @default(false) // Indicates if the system should send the link
-    send_date      DateTime? // Date when the link should be sent
+    send_date      DateTime? @default(now()) // Date when the link should be sent
 
     brand   Brand  @relation(fields: [brandId], references: [id])
     brandId String
@@ -136,6 +138,22 @@ model Recipient {
     updated_at DateTime?
 
     @@map("recipients")
+}
+
+model Message {
+    id String @id @default(cuid())
+
+    title     String?
+    text      String?
+    image_url String?
+    video_url String?
+    voice_url String?
+
+    created_at DateTime  @default(now())
+    updated_at DateTime?
+    Order      Order[]
+
+    @@map("messages")
 }
 
 // enum RecipientType {
