@@ -1,4 +1,7 @@
 import type { Config } from "tailwindcss";
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
 const colors = require("tailwindcss/colors");
 function withOpacity(variableName: string) {
   return ({ opacityValue }: { opacityValue: any }) => {
@@ -135,10 +138,20 @@ const config = {
             strokeDashoffset: "1000",
           },
         },
+
+        aurora: {
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        aurora: "aurora 60s linear infinite",
       },
       screens: {
         mobileMax: { max: "500px" },
@@ -299,6 +312,7 @@ const config = {
     require("tailwind-scrollbar")({ nocompatible: true }),
     require("@headlessui/tailwindcss"),
     require("tailwindcss-bg-patterns"),
+    addVariablesForColors,
     function ({
       matchUtilities,
       addUtilities,
@@ -354,3 +368,13 @@ const config = {
 } satisfies Config;
 
 export default config;
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
+  );
+
+  addBase({
+    ":root": newVars,
+  });
+}

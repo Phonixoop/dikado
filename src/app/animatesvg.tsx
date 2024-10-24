@@ -1,22 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import { Button as ShadButton } from "~/components/ui/button";
+import { Button as ShadButton } from "~/components/shadcn/button";
 import { Gift, Sparkles, Zap, Heart } from "lucide-react";
 import Link from "next/link";
 import LinkButton from "~/ui/buttons/link-button";
 import Button from "~/ui/buttons";
+import { MovingButton } from "~/components/aceternity/moving-border-button";
+import { Vortex } from "~/components/aceternity/vortex";
+import { Boxes } from "~/components/aceternity/background-boxes";
 
 export default function DigitalGiftHero() {
   const [isHovering, setIsHovering] = useState(false);
 
   return (
     <section dir="rtl" className="h-screen overflow-hidden text-primary">
+      {" "}
       <div className="container mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-        <div className="relative flex flex-col items-center justify-center gap-10">
+        {" "}
+        <Vortex
+          particleCount={20}
+          rangeY={1080}
+          className="relative flex flex-col items-center justify-center gap-10"
+        >
+          {" "}
           <div className="z-10 flex flex-col items-center justify-center space-y-8 text-center backdrop-blur-md lg:text-left">
             <h1 className="flex gap-3 text-center text-4xl font-bold tracking-tighter text-accent sm:text-5xl xl:text-6xl/none">
-              <span>دیکادو</span>
+              <span>دیکادو</span>{" "}
               <span className="text-yellow-300">یک سوپرایز دیجیتال</span>
             </h1>
             <p
@@ -32,12 +42,16 @@ export default function DigitalGiftHero() {
               عزیزان خود تقدیم کنند.
             </p>
             <div className="flex w-full items-center justify-center gap-5 py-5">
-              <Button className="flex items-center justify-center gap-2 border border-white/0 bg-accent px-5 py-3 text-sm text-primary hover:bg-secondary">
+              <MovingButton
+                borderRadius="1.75rem"
+                className="flex items-center justify-center gap-2 border border-white/0 bg-secondary px-5 py-3 text-sm text-primary hover:bg-secbuttn"
+              >
+                {" "}
                 <Gift className="h-5 w-5" />
                 کادو بفرست
-              </Button>
+              </MovingButton>
               <Link className="flex w-auto" href={"/brands"} prefetch>
-                <Button className="w-auto border border-accent border-primary/80 bg-transparent px-10 py-2 text-primary hover:bg-white/20">
+                <Button className="w-auto rounded-[1.75rem] border border-accent border-primary/80 bg-transparent px-10 py-4 text-primary hover:bg-white/20">
                   برند ها
                 </Button>
               </Link>
@@ -162,7 +176,7 @@ export default function DigitalGiftHero() {
               </text>
             </svg>
           </div>
-        </div>
+        </Vortex>
       </div>
     </section>
   );

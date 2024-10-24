@@ -14,18 +14,17 @@ export const updateBrandSchema = z.object({
 // Define the schema for FormType
 export const createOrderSchema = z.object({
   authority: z.string(),
-  name: z.string({ required_error: "این فیلد اجباری است" }),
+
+  price: z.number(),
   recipients: z
     .array(
       z.object({
-        value: z.string(),
-        type: z.string(),
+        value: z.string({ required_error: "این مقدار اجباری است" }).length(11),
+        type: z.enum(["MOBILE", "EMAIL"]),
       }),
     )
-    .nullish()
-    .optional(),
+    .min(1),
   message: z.string().nullish(),
-  price: z.number(),
   send_by_system: z.boolean().nullish().default(false),
   send_date: z.date().nullish(),
 

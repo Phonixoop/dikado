@@ -17,7 +17,7 @@ export default function Nothing() {
 //   NavigationMenuList,
 //   NavigationMenuTrigger,
 //   navigationMenuTriggerStyle,
-// } from "~/components/ui/navigation-menu";
+// } from "~/components/shadcn/navigation-menu";
 // import { twMerge } from "tailwind-merge";
 
 // const components: { title: string; href: string; description: string }[] = [

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import { Switch } from "~/components/ui/switch";
+import { Switch } from "~/components/shadcn/switch";
 import { MENU } from "~/constants";
 import Link from "next/link";
 import { ThemeProvider, useTheme } from "~/context/theme.context";

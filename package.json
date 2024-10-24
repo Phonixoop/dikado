@@ -63,6 +63,7 @@
     "react-dom": "^18.3.1",
     "react-multi-date-picker": "^4.5.2",
     "server-only": "^0.0.1",
+    "simplex-noise": "^4.0.3",
     "sonner": "^1.4.41",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.3.0",

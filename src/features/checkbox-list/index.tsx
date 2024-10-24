@@ -12,7 +12,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
+} from "~/components/shadcn/tooltip";
 export default function CheckboxList({ checkboxes, onCheckboxChange }) {
   const handleCheckboxChange = (id) => {
     onCheckboxChange(id);

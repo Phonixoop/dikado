@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import ChooseRecipient from "~/app/brands/[name]/choose-recipient";
 import BrandsWithFilterView from "~/app/brands/brands-with-filter-view";
 import { api } from "~/trpc/server";
 import { Container } from "~/ui/containers";

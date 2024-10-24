@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from "react";
-import { toast } from "~/components/ui/toast/use-toast";
+import { toast } from "~/components/shadcn/toast/use-toast";
 
 export default function useStatus() {
   const [isOnline, setIsOnline] = useState<boolean>(true);

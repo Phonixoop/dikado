@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "~/components/ui/sheet";
+} from "~/components/shadcn/sheet";
 
 import React from "react";
 import Button from "~/ui/buttons";
@@ -23,7 +23,7 @@ export default function SheetView({
     <>
       <Sheet>
         <SheetTrigger className="bg-secondary p-2">{icon}</SheetTrigger>
-        <SheetContent className="w-full ">
+        <SheetContent className="w-full">
           <SheetHeader>
             <SheetTitle>{title}</SheetTitle>
           </SheetHeader>

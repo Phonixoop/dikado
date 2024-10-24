@@ -9,7 +9,7 @@ export function PriceField({
   ...rest
 }) {
   const [_value, setValue] = useState<string>(commify(value));
-  console.log(value);
+
   // Synchronize _value with the value prop when it changes
   useEffect(() => {
     setValue(commify(value));

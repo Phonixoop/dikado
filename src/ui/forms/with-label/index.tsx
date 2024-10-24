@@ -48,7 +48,7 @@ function withLabel<T>(Component: FC<T>) {
         <label
           onClick={() => setFocused(true)}
           className={cn(
-            "absolute right-2.5 top-4 z-10 origin-top-right -translate-y-2 scale-75 transform select-none text-sm text-primary duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-2 peer-focus:scale-75 peer-focus:text-accent",
+            "absolute right-2.5 top-2 z-10 origin-top-right -translate-y-2 scale-75 transform select-none text-sm text-primary duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-2 peer-focus:scale-75 peer-focus:text-accent",
           )}
         >
           {label}

@@ -33,6 +33,7 @@ export default async function LoginPage({}) {
           <div className="flex w-11/12 md:w-3/5">
             {session?.user?.username}
             <MultiStepProvider
+              validationSchema="userLogin"
               stepNames={stepNames}
               initialValues={initialValues}
             >

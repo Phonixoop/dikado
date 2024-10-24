@@ -4,24 +4,20 @@ import BrandView from "~/app/brands/[name]/brand";
 import { api } from "~/trpc/server";
 
 import { Container } from "~/ui/containers";
-import { MultiStepProvider } from "~/context/multiform.context";
 import { z } from "zod";
+// import { createOrderSchema } from "~/server/validations/order.validation";
+import { MultiStepProvider } from "~/context/multiform.context";
 import { createOrderSchema } from "~/server/validations/order.validation";
-import { generateDefaultObjectFromZod } from "~/lib/utils";
 
 const stepNames = [
-  "phonenumber",
-  "wait_sendcode",
-  "entercode",
-  "wait_validatecode",
+  "choose_price",
+  "choose_recipient",
+  "type_message",
+  "choose_gift_paint",
+  "choose_send_time",
   "error",
-  "welcome",
+  "payed",
 ];
-
-type Props = {
-  params: { name: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
 
 export async function generateMetadata(
   { params, searchParams }: Props,
@@ -67,7 +63,17 @@ export async function generateMetadata(
   };
 }
 
-const initialValues = generateDefaultObjectFromZod(createOrderSchema);
+type Props = {
+  params: { name: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+export type TOrder = z.infer<typeof createOrderSchema>;
+const stepFieldMap = [["price"], ["recipients"], ["send_date"]];
+// let initialValues: TOrder = generateDefaultObjectFromZod(createOrderSchema);
+// initialValues = {
+//   ...initialValues,
+//   price: 10_00_000,
+// };
 export default async function SingleBrandPage(props: Props) {
   const brand = await api.brand.getBrandByName({
     name: decodeURIComponent(props.params.name),
@@ -75,7 +81,22 @@ export default async function SingleBrandPage(props: Props) {
 
   return (
     <Container className="md:w-full">
-      <MultiStepProvider stepNames={stepNames} initialValues={initialValues}>
+      <MultiStepProvider<TOrder>
+        validationSchema={"createOrder"}
+        stepNames={stepNames}
+        stepDependencies={[[], [0], [0, 1], [1], [1]]}
+        initialValues={{
+          price: 10_00_000,
+          recipients: [
+            {
+              value: "",
+              type: "MOBILE",
+            },
+          ],
+          brandId: brand.id,
+        }}
+        stepFieldMap={stepFieldMap}
+      >
         <BrandView brand={brand} />
       </MultiStepProvider>
     </Container>

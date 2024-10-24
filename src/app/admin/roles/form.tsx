@@ -16,7 +16,7 @@ import InputError from "~/ui/forms/input-error";
 import { cn } from "~/lib/utils";
 import { Container } from "~/ui/containers";
 import withConfirmation from "~/ui/with-confirmation";
-import { toast } from "~/components/ui/toast/use-toast";
+import { toast } from "~/components/shadcn/toast/use-toast";
 import { Trash2Icon } from "lucide-react";
 import { updateDynamicPermissions } from "~/utils/util";
 const TextWithLabel = withLabel(TextField);

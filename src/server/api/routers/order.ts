@@ -8,8 +8,6 @@ import {
 import {
   brandIdSchema,
   brandNameSchema,
-  createBrandSchema,
-  filterBrandsByCategoriesSchema,
   updateBrandSchema,
 } from "~/server/validations/brand.validation";
 import { createOrderSchema } from "~/server/validations/order.validation";

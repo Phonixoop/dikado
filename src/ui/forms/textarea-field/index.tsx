@@ -11,7 +11,8 @@ interface TextAreaFieldProps {
   isRtl?: boolean;
   rows?: number;
   cols?: number;
-  onChange?: (value: ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onValueChange?: (value: string) => void;
   focused?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -35,7 +36,8 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   isRtl = true,
   rows,
   cols,
-  onChange = (value) => {},
+  onChange = (e) => {},
+  onValueChange = (value) => {},
   focused = false,
   onFocus = () => {},
   onBlur = () => {},
@@ -71,16 +73,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         ref={ref}
         className={cn(
           direction,
-          `peer
-        block 
-        w-full appearance-none
-        border-b-2 border-primary bg-secbuttn px-2.5 
-        pb-2.5 
-        pt-5 
-        text-sm font-bold 
-        text-primary
-        selection:bg-primary selection:text-white placeholder:opacity-0 
-        focus:border-accent focus:outline-none focus:ring-0  focus:placeholder:opacity-100`,
+          `peer block w-full appearance-none border-b-2 border-primary bg-secbuttn px-2.5 pb-2.5 pt-5 text-sm font-bold text-primary selection:bg-primary selection:text-white placeholder:opacity-0 focus:border-accent focus:outline-none focus:ring-0 focus:placeholder:opacity-100`,
           className,
         )}
         placeholder={" "}
@@ -96,7 +89,10 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
             placeholderRef.current.style.opacity = "0";
           onBlur();
         }}
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e)}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+          onChange(e);
+          onValueChange(e.target.value);
+        }}
         {...rest}
       />
 
@@ -105,22 +101,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         onClick={() => {
           if (ref.current) ref.current.focus();
         }}
-        className="placeholder absolute
-          right-2.5
-          top-9
-          origin-top-right
-          -translate-y-4
-          scale-75
-          transform 
-          text-sm
-          text-gray-500 
-          opacity-0 
-          duration-300
-          peer-placeholder-shown:scale-100
-          peer-focus:text-blue-400
-          dark:text-gray-400  
-          peer-focus:dark:text-blue-200
-          mobileMax:peer-focus:opacity-100"
+        className="placeholder absolute right-2.5 top-9 origin-top-right -translate-y-4 scale-75 transform text-sm text-gray-500 opacity-0 duration-300 peer-placeholder-shown:scale-100 peer-focus:text-blue-400 dark:text-gray-400 peer-focus:dark:text-blue-200 mobileMax:peer-focus:opacity-100"
       >
         {placeholder}
       </label>

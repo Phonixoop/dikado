@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-import { ShoppingCart } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { BanknoteIcon } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "~/components/shadcn/radio-group";
 
 import {
   Card,
@@ -11,19 +11,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
+} from "~/components/shadcn/card";
+import { Label } from "~/components/shadcn/label";
 import withLabel from "~/ui/forms/with-label";
-import IntegerField from "~/ui/forms/integer-field";
 import Button from "~/ui/buttons";
 import { cn } from "~/lib/utils";
-import { commify } from "~/utils/util";
-import { wordifyfa, wordifyRialsInTomans } from "~/lib/wordify/wordifyfa";
+import { wordifyRialsInTomans } from "~/lib/wordify/wordifyfa";
 import { PriceField } from "~/ui/forms/price-field";
 import { useMultiStep } from "~/context/multiform.context";
-import { createOrderSchema } from "~/server/validations/order.validation";
-import { z } from "zod";
-import TextField from "~/ui/forms/text-field";
+import { TOrder } from "~/app/brands/[name]/page";
 
 const PriceFieldWithLabel = withLabel(PriceField);
 const PRICES = [
@@ -45,13 +41,11 @@ const PRICES = [
   },
 ];
 
-type TOrder = z.infer<typeof createOrderSchema>;
-
 export function ChoosePrice() {
-  const { formik } = useMultiStep<TOrder>();
+  const { formik, nextStep } = useMultiStep<TOrder>();
 
   const [selectedAmount, setSelectedAmount] = useState(
-    PRICES[0].value || "custom",
+    formik.values.price || "custom",
   );
   const [customAmount, setCustomAmount] = useState(undefined);
 
@@ -132,7 +126,7 @@ export function ChoosePrice() {
                   "w-full rounded-lg border border-accent",
                   selectedAmount === "custom"
                     ? "bg-accent/10"
-                    : "rounded-none border-l-0 border-r-0 border-t-0 border-b-accent bg-secondary",
+                    : "rounded-none border-l-0 border-r-0 border-t-0 border-b-accent bg-transparent",
                 )}
               />
             </div>
@@ -141,10 +135,15 @@ export function ChoosePrice() {
 
         <CardFooter className="flex flex-col items-stretch gap-4">
           <Button
-            disabled={isAmountValid() === false}
-            className="flex h-12 w-full justify-center gap-2 border border-accent text-lg transition-all duration-300 hover:border-accent/30 hover:bg-accent/20"
+            disabled={
+              isAmountValid() === false && formik.errors.price?.length <= 0
+            }
+            onClick={() => {
+              nextStep();
+            }}
+            className="flex h-12 w-full max-w-xs justify-center gap-2 border border-accent text-lg transition-all duration-300 hover:border-accent/30 hover:bg-accent/20 sm:max-w-lg"
           >
-            <ShoppingCart className="mr-2 h-5 w-5" /> ادامه{" "}
+            <BanknoteIcon className="mr-2 h-5 w-5" /> ادامه{" "}
             <span className="truncate text-accent">{getFinalAmount()}</span>
           </Button>
           <p className="text-muted-foreground text-center text-sm">

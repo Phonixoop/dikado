@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import Button from "~/ui/buttons";
@@ -29,9 +29,31 @@ const MultiStep: FC<MultiStepProps> = ({
   icons = [],
   steps = [],
 }) => {
-  const { currentStepIndex, previousStep, nextStep, goToStep } = useMultiStep();
+  const {
+    currentStepIndex,
+    previousStep,
+    formik,
+    nextStep,
+    goToStep,
+    validateStep,
+    arePreviousStepsValid,
+  } = useMultiStep();
   const stepsArray = React.Children.toArray(children);
   const currentStepNode: React.ReactNode = stepsArray[currentStepIndex];
+  const [isStepValid, setIsStepValid] = useState<boolean[]>(
+    new Array(icons.length).fill(true),
+  );
+
+  useEffect(() => {
+    // Validate all steps when currentStepIndex changes
+    const validityArray = icons.map((_, index) => {
+      const isValid = validateStep(index);
+      return isValid;
+    });
+
+    // Update the validity state with the new array
+    setIsStepValid(validityArray);
+  }, [currentStepIndex, formik.errors]); // Depend on form values and step index
   return (
     <div
       className={cn(
@@ -102,7 +124,7 @@ const MultiStep: FC<MultiStepProps> = ({
           <Button
             disabled={isLoading}
             className={twMerge(
-              "group absolute left-1 z-20 rounded-full p-1.5 ring-1 ring-accent transition duration-500 hover:bg-accent/20 hover:ring-secondary",
+              "group absolute left-1 z-20 rounded-full bg-secondary p-1.5 ring-1 ring-accent transition duration-500 hover:bg-accent/20 hover:ring-secondary",
               currentStepIndex === 0 ? "opacity-0" : "opacity-100",
             )}
             onClick={() => {
@@ -114,7 +136,7 @@ const MultiStep: FC<MultiStepProps> = ({
           <Button
             disabled={isLoading}
             className={twMerge(
-              "group absolute right-1 z-20 rounded-full p-1.5 ring-1 ring-accent transition duration-500 hover:bg-accent/20 hover:ring-secondary",
+              "group absolute right-1 z-20 rounded-full bg-secondary p-1.5 ring-1 ring-accent transition duration-500 hover:bg-accent/20 hover:ring-secondary",
               currentStepIndex === icons.length - 1
                 ? "opacity-0"
                 : "opacity-100",
@@ -133,17 +155,26 @@ const MultiStep: FC<MultiStepProps> = ({
             const distance = Math.abs(currentStepIndex - i);
             const scale =
               distance === 1 ? "100%" : distance === 2 ? "70%" : "0%";
+
             return (
               <button
-                disabled={isLoading}
+                disabled={isLoading || !arePreviousStepsValid(i)}
                 key={i}
                 onClick={() => goToStep(i)}
-                className={twMerge(
-                  "z-1 absolute flex -translate-x-1/2 scale-75 cursor-pointer rounded-full transition-all duration-200",
-                  currentStepIndex === i
-                    ? "bg-primary stroke-secbuttn"
-                    : "bg-secondary stroke-accent opacity-0 sm:opacity-100",
+                className={cn(
+                  "z-1 group absolute flex -translate-x-1/2 scale-75 cursor-pointer rounded-full border bg-secondary transition-all duration-200 disabled:cursor-not-allowed",
+
+                  isStepValid[i] &&
+                    currentStepIndex === i &&
+                    "border-primary bg-primary stroke-secondary text-accent disabled:border-none disabled:bg-slate-700",
+                  isStepValid[i] &&
+                    currentStepIndex !== i &&
+                    "border-accent disabled:border-none",
+                  !isStepValid[i] &&
+                    "border border-rose-500 bg-rose-950 stroke-rose-500 opacity-0 disabled:border-none disabled:bg-slate-700 sm:opacity-100",
+
                   loadingSteps.includes(i) ? "sm:bottom-5" : "",
+                  "",
                 )}
                 style={{
                   left:
@@ -154,17 +185,20 @@ const MultiStep: FC<MultiStepProps> = ({
                 }}
               >
                 <span
-                  className={twMerge(
-                    "cursor-pointer rounded-full border stroke-inherit p-3 transition-all duration-1000",
-                    currentStepIndex === i
-                      ? "border-primary opacity-100"
-                      : "border-accent/50 bg-accent/20 opacity-50",
+                  className={cn(
+                    "cursor-pointer rounded-full stroke-inherit p-3 transition-all duration-1000 group-disabled:cursor-not-allowed",
+
+                    isStepValid[i] &&
+                      currentStepIndex !== i &&
+                      "bg-accent/30 stroke-accent text-accent group-disabled:bg-accent/50 group-disabled:stroke-accent/90",
+                    currentStepIndex === i ? "opacity-100" : "opacity-60",
                     currentStepIndex === i && loadingSteps.includes(i)
                       ? "animate-spin"
                       : "",
                   )}
                 >
-                  {icon}
+                  {" "}
+                  <span className="text-inherit">{icon}</span>
                 </span>
               </button>
             );

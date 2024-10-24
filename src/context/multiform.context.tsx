@@ -1,15 +1,8 @@
 "use client";
-import { FormikConfig, FormikHelpers, useFormik } from "formik";
-import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { boolean } from "zod";
-import { toFormikValidationSchema } from "zod-formik-adapter";
-import { userLoginSchema } from "~/server/validations/user.validation";
+import { FormikHelpers, useFormik } from "formik";
+import React, { ReactNode, createContext, useContext, useState } from "react";
+
+import { SCHEMAS } from "~/server/validations";
 
 type TMultiStepContext<T> = {
   currentStepIndex: number;
@@ -23,6 +16,8 @@ type TMultiStepContext<T> = {
   nextStep: (onValidate?: ({ stepName, stepIndex }) => boolean) => void;
   previousStep: (onValidate?: ({ stepName, stepIndex }) => boolean) => void;
   formik: ReturnType<typeof useFormik<T>>;
+  validateStep: (step: number | string) => boolean; // New function
+  arePreviousStepsValid(step: number | string): boolean;
   // setBeforeStepChange: (
   //   fn: (nextStepName: string, nextStepIndex: number) => boolean,
   // ) => void;
@@ -34,8 +29,11 @@ type TMultiStepContext<T> = {
 type MultiStepProviderProps<T> = {
   children: ReactNode;
   stepNames: string[];
+  stepDependencies?: number[][];
   initialStep?: number;
   initialValues: T;
+  validationSchema: keyof typeof SCHEMAS;
+  stepFieldMap?: string[][];
   onSubmit?: (values: T, helpers: FormikHelpers<T>) => void;
 };
 const MultiStepContext = createContext<TMultiStepContext<any> | undefined>(
@@ -56,8 +54,11 @@ export const useMultiStep = <T extends object>() => {
 export function MultiStepProvider<T extends object>({
   children,
   stepNames,
+  stepDependencies = [],
   initialStep = 0,
   initialValues,
+  validationSchema,
+  stepFieldMap,
 
   onSubmit,
 }: MultiStepProviderProps<T>) {
@@ -67,12 +68,20 @@ export function MultiStepProvider<T extends object>({
 
   // Initialize formik dynamically with the given schema and initial values
   const formik = useFormik<T>({
-    initialValues: {} as T,
+    initialValues: initialValues as T,
     validateOnMount: true,
     validateOnBlur: true,
-    validationSchema: toFormikValidationSchema(userLoginSchema),
+    validateOnChange: true,
+    validationSchema: SCHEMAS[validationSchema],
     onSubmit,
   });
+  const arePreviousStepsValid = (step: number | string): boolean => {
+    let stepIndex = typeof step === "number" ? step : stepNames.indexOf(step);
+    if (!stepDependencies[stepIndex]) return true; // If no dependencies, no check required
+    return stepDependencies[stepIndex].every((depIndex) =>
+      validateStep(depIndex),
+    ); // Ensure all dependent steps are valid
+  };
 
   const goToStep = (
     step: string | number,
@@ -80,6 +89,13 @@ export function MultiStepProvider<T extends object>({
   ) => {
     let stepIndex = typeof step === "number" ? step : stepNames.indexOf(step);
     if (stepIndex < 0 || stepIndex >= stepNames.length) return;
+
+    if (!arePreviousStepsValid(stepIndex)) {
+      console.warn(
+        `Cannot access step ${stepIndex} because previous steps are not valid.`,
+      );
+      return;
+    }
 
     // Check if beforeStepChange exists and call it if set
     if (
@@ -101,6 +117,28 @@ export function MultiStepProvider<T extends object>({
     goToStep(currentStepIndex - 1, onValidate);
   };
 
+  function validateStep(step: string | number): boolean {
+    if (!stepFieldMap || stepFieldMap.length <= 0) return true;
+    let stepIndex = typeof step === "number" ? step : stepNames.indexOf(step);
+    if (stepIndex < 0 || stepIndex >= stepNames.length) return false;
+
+    let isStepValid = true;
+    if (stepFieldMap[stepIndex]?.length <= 0) return true;
+    // Loop through fields associated with the step and check for errors
+    for (let i = 0; i < stepFieldMap[stepIndex]?.length; i++) {
+      const fieldName = stepFieldMap[stepIndex][i];
+      const fieldError = formik.errors[fieldName];
+
+      // If there's an error in the field and it's touched, step is invalid
+      if (fieldError) {
+        isStepValid = false;
+        break; // Exit loop if any field is invalid
+      }
+    }
+
+    return isStepValid;
+  }
+
   return (
     <MultiStepContext.Provider
       value={{
@@ -112,6 +150,8 @@ export function MultiStepProvider<T extends object>({
         isValid,
         setIsValid,
         formik, // Expose formik instance
+        validateStep,
+        arePreviousStepsValid,
       }}
     >
       {children}

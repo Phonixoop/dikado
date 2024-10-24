@@ -130,6 +130,7 @@ export const brandRouter = createTRPCRouter({
           name: input.name,
         },
         select: {
+          id: true,
           name: true,
           categories: {
             select: {

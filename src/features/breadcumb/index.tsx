@@ -13,14 +13,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
+} from "~/components/shadcn/breadcrumb";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/drop-down-menu";
+} from "~/components/shadcn/drop-down-menu";
 import {
   Drawer,
   DrawerClose,
@@ -30,7 +30,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "~/components/ui/drawer";
+} from "~/components/shadcn/drawer";
 import Button from "~/ui/buttons";
 import { MENU, TMenu } from "~/constants";
 
